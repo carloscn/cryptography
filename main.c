@@ -16,6 +16,7 @@
 
 int main(void)
 {
+    /*
 	printf("--------------------------\nmain: test_md5...\n--------------------------\n");
 	test_md5();
 	printf("--------------------------\nmain: test_evp_md5...\n--------------------------\n");
@@ -33,4 +34,9 @@ int main(void)
 	printf("--------------------------\nmain: rsa signature verify...\n--------------------------\n");
 	test_evp_sm2_signature_verify();
 	printf("--------------------------\nmain: test end \n--------------------------\n");
+     */
+    printf("--------------------------\nmain: test_evp_md5...\n--------------------------\n");
+    test_evp_md5();
+    printf("--------------------------\nmain: test_mbedtls_md5...\n--------------------------\n");
+    test_mbedtls_md5();
 }

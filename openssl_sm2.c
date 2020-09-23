@@ -440,7 +440,6 @@ int openssl_evp_sm2_signature(unsigned char *sign_rom, size_t sign_rom_len,
     if (ec_key != NULL)
         EC_KEY_free(ec_key);
     return ret;
-
 }
 
 int openssl_evp_sm2_verify(unsigned char *sign_rom, size_t sign_rom_len,

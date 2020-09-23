@@ -113,6 +113,12 @@
 		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/test_case.h">
 			<Option target="warm_openssl"/>
 		</Unit>
+		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/utils.c">
+			<Option target="warm_openssl"/>
+		</Unit>
+		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/utils.h">
+			<Option target="warm_openssl"/>
+		</Unit>
 		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

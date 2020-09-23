@@ -354,7 +354,7 @@ int openssl_evp_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
     }
     fp = fopen((const char*)pub_pem_file, "r");
     if (NULL == fp) {
-        printf("input pem_file is not exit.\n");
+        printf("input pem_file is not exit.\n ");
         ret = -1;
         goto finish;
     }

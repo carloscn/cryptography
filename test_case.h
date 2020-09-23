@@ -7,6 +7,7 @@
 #include "openssl_rsa.h"
 #include "openssl_sm2.h"
 #include "openssl_md_sha.h"
+#include "mbedtls_md_sha.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
@@ -18,6 +19,7 @@ int test_evp_sm2_signature_verify();
 int test_evp_rsa_signature_verify();
 int test_md5();
 int test_evp_md5();
+int test_mbedtls_md5();
 int test_evp_sm2_encrypt_decrypt();
 int test_evp_rsa_encrypt_decrypt();
 

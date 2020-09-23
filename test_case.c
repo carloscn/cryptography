@@ -103,6 +103,27 @@ int test_evp_md5()
     printf("\n");
     return 0;
 }
+
+int test_mbedtls_md5()
+{
+    unsigned char input_str[] = "hello";
+    unsigned char outmd[32];
+    int ret = 0, i = 0;
+
+    /*open ssl evp MD5 using*/
+    memset(outmd, 0, 32);
+    ret = mbedtls_user_md(input_str, strlen(input_str), outmd,  "SHA512");
+    if (ret != 0) {
+        printf("mbedtls_md5_test_out failed: %d\n", ret);
+    }
+    printf("%s mbedtls md5: ", input_str);
+    for(i = 0; i < 16; i++) {
+        printf("%02X", outmd[i]);
+    }
+    printf("\n");
+    return 0;
+}
+
 int test_evp_rsa_signature_verify()
 {
     int ret = 0, i = 0;

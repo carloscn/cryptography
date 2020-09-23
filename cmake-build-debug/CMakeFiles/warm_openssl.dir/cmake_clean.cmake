@@ -5,6 +5,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/warm_openssl.dir/openssl_rsa.c.o"
   "CMakeFiles/warm_openssl.dir/openssl_sm2.c.o"
   "CMakeFiles/warm_openssl.dir/test_case.c.o"
+  "CMakeFiles/warm_openssl.dir/utils.c.o"
   "warm_openssl"
   "warm_openssl.pdb"
 )
