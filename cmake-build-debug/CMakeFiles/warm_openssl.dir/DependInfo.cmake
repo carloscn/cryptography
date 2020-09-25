@@ -4,20 +4,21 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/main.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/main.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/mbedtls_md_sha.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/mbedtls_md_sha.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_md_sha.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/openssl_md_sha.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_rsa.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/openssl_rsa.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_sm2.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/openssl_sm2.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/test_case.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/test_case.c.o"
-  "/Users/carlos/workspace/Clion/warm_rsa_md_sha/utils.c" "/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/CMakeFiles/warm_openssl.dir/utils.c.o"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/main.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/main.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/mbedtls_md_sha.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/mbedtls_md_sha.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/openssl_md_sha.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/openssl_md_sha.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/openssl_rsa.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/openssl_rsa.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/openssl_sm2.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/openssl_sm2.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/test_case.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/test_case.c.obj"
+  "C:/Users/carwei01/workspace/visual/cryptography/src/utils.c" "C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/CMakeFiles/warm_openssl.dir/src/utils.c.obj"
   )
-set(CMAKE_C_COMPILER_ID "AppleClang")
+set(CMAKE_C_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_C_TARGET_INCLUDE_PATH
-  "/usr/local/openssl/include"
-  "/usr/local/include"
+  "C:/Program Files/OpenSSL-Win64/include"
+  "C:/opt/mbedtls-2.16.5/include"
+  ".././inc"
   )
 
 # Targets to which this target links.

@@ -1,4 +1,6 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/carlos/workspace/Clion/warm_rsa_md_sha
+"C:\opt\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" C:\Users\carwei01\workspace\visual\cryptography
+-- operation system is Windows-10.0.18363
+-- Now is windows
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug
+-- Build files have been written to: C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug

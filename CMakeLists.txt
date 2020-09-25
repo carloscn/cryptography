@@ -1,10 +1,24 @@
 cmake_minimum_required(VERSION 3.17)
-project(warm_openssl C)
+project(carlos_openmbed C)
+
+MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
 
 set(CMAKE_C_STANDARD 99)
+AUX_SOURCE_DIRECTORY(src DIR_SRCS)
+SET(SRC_PATH ${DIR_SRCS})
+IF(WIN32)
+    SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
+    SET(mbedtls_dir C:/opt/mbedtls-2.16.5)
+    MESSAGE(STATUS "Now is windows")
+ELSEIF(APPLE)
+    SET(openssl_dir /usr/local/openssl)
+    SET(mbedtls_dir /usr/local/include)
+    MESSAGE(STATUS "Now is apple")
+ENDIF()
+include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
+include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
+link_libraries(ssl crypto mbedx509 mbedtls mbedcrypto)
+add_executable(${PROJECT_NAME} ${SRC_PATH})
 
-link_directories(/usr/local/openssl/lib /usr/local/lib)
-include_directories(/usr/local/openssl/include /usr/local/include)
-link_libraries(mbedx509 mbedtls mbedcrypto ssl crypto)
 
-add_executable(warm_openssl main.c openssl_rsa.c openssl_sm2.c test_case.c openssl_rsa.h openssl_sm2.h test_case.h openssl_md_sha.c openssl_md_sha.h mbedtls_md_sha.c mbedtls_md_sha.h utils.c utils.h)
+

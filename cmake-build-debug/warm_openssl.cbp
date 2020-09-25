@@ -8,118 +8,100 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug"/>
+				<Option working_dir="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="warm_openssl">
-				<Option output="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/warm_openssl" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug"/>
+				<Option output="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/warm_openssl.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/local/openssl/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.3/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/System/Library/Frameworks"/>
-					<Add directory="/Library/Frameworks"/>
+					<Add directory="C:/Program Files/OpenSSL-Win64/include"/>
+					<Add directory="C:/opt/mbedtls-2.16.5/include"/>
+					<Add directory="C:/Users/carwei01/workspace/visual/cryptography/./inc"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 warm_openssl"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 warm_openssl"/>
+					<CompileFile command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="warm_openssl/fast">
-				<Option output="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/warm_openssl" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug"/>
+				<Option output="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/warm_openssl.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/usr/local/openssl/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/11.0.3/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/System/Library/Frameworks"/>
-					<Add directory="/Library/Frameworks"/>
+					<Add directory="C:/Program Files/OpenSSL-Win64/include"/>
+					<Add directory="C:/opt/mbedtls-2.16.5/include"/>
+					<Add directory="C:/Users/carwei01/workspace/visual/cryptography/./inc"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/include-fixed"/>
+					<Add directory="C:/opt/mingw-w64/mingw64/bin/../lib/gcc/x86_64-w64-mingw32/8.1.0/../../../../x86_64-w64-mingw32/include"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 warm_openssl/fast"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 warm_openssl/fast"/>
+					<CompileFile command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="C:/opt/mingw-w64/mingw64/bin/mingw32-make.exe -f &quot;C:/Users/carwei01/workspace/visual/cryptography/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/main.c">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/main.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/mbedtls_md_sha.c">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/mbedtls_md_sha.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/mbedtls_md_sha.h">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/openssl_md_sha.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_md_sha.c">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/openssl_rsa.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_md_sha.h">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/openssl_sm2.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_rsa.c">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/test_case.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_rsa.h">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/utils.c">
 			<Option target="warm_openssl"/>
 		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_sm2.c">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/openssl_sm2.h">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/test_case.c">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/test_case.h">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/utils.c">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/utils.h">
-			<Option target="warm_openssl"/>
-		</Unit>
-		<Unit filename="/Users/carlos/workspace/Clion/warm_rsa_md_sha/CMakeLists.txt">
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>
