@@ -10,15 +10,23 @@ IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
     SET(mbedtls_dir C:/opt/mbedtls-2.16.5)
     MESSAGE(STATUS "Now is windows")
+    include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
+    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
+    link_libraries(${openssl_dir}/lib/libssl.lib
+            ${openssl_dir}/lib/libcrypto.lib
+            ${mbedtls_dir}/library/libmbedtls.a
+            ${mbedtls_dir}/library/libmbedcrypto.a)
+    add_executable(${PROJECT_NAME} ${SRC_PATH})
 ELSEIF(APPLE)
     SET(openssl_dir /usr/local/openssl)
     SET(mbedtls_dir /usr/local/include)
     MESSAGE(STATUS "Now is apple")
+    include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
+    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
+    link_libraries(ssl libcrypto mbedtls mbedcrypto)
+    add_executable(${PROJECT_NAME} ${SRC_PATH})
 ENDIF()
-include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
-include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
-link_libraries(ssl crypto mbedx509 mbedtls mbedcrypto)
-add_executable(${PROJECT_NAME} ${SRC_PATH})
+
 
 
 

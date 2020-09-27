@@ -1,1 +1,1 @@
- -lssl -lcrypto -lmbedx509 -lmbedtls -lmbedcrypto -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 
+ "C:/Program Files/OpenSSL-Win64/lib/libssl.lib" "C:/Program Files/OpenSSL-Win64/lib/libcrypto.lib" C:/opt/mbedtls-2.16.5/library/libmbedtls.a C:/opt/mbedtls-2.16.5/library/libmbedcrypto.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

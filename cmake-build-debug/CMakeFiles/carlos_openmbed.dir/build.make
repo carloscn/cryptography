@@ -195,6 +195,10 @@ carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/utils.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/build.make
+carlos_openmbed.exe: C:/Program\ Files/OpenSSL-Win64/lib/libssl.lib
+carlos_openmbed.exe: C:/Program\ Files/OpenSSL-Win64/lib/libcrypto.lib
+carlos_openmbed.exe: C:/opt/mbedtls-2.16.5/library/libmbedtls.a
+carlos_openmbed.exe: C:/opt/mbedtls-2.16.5/library/libmbedcrypto.a
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/linklibs.rsp
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/objects1.rsp
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/link.txt

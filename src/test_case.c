@@ -112,7 +112,7 @@ int test_mbedtls_md5()
 
     /*open ssl evp MD5 using*/
     memset(outmd, 0, 32);
-    ret = mbedtls_user_md(input_str, strlen(input_str), outmd,  "SHA512");
+    ret = mbedtls_user_md(input_str, strlen(input_str), outmd,  "MD5");
     if (ret != 0) {
         printf("mbedtls_md5_test_out failed: %d\n", ret);
     }

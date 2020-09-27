@@ -15,7 +15,7 @@ int generate_rsa_key_files(const char *pub_keyfile, const char *pri_keyfile,
                            const unsigned char *passwd, int passwd_len)
 {
     RSA *rsa = NULL;
-    RAND_seed(rnd_seed, sizeof(rnd_seed));
+    //RAND_seed(rnd_seed, sizeof(rnd_seed));
     rsa = RSA_generate_key(RSA_KEY_LENGTH, RSA_F4, NULL, NULL);
     if(rsa == NULL) {
         printf("RSA_generate_key error!\n");
