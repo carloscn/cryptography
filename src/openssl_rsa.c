@@ -42,7 +42,7 @@ int generate_rsa_key_files(const char *pub_keyfile, const char *pri_keyfile,
         return -1;
     }
     if(PEM_write_bio_RSAPrivateKey(bp, rsa,
-                                   EVP_des_ede3_ofb(), (unsigned char *)passwd,
+                                   NULL, (unsigned char *)passwd,
                                    passwd_len, NULL, NULL) != 1) {
         printf("PEM_write_bio_RSAPublicKey error!\n");
         return -1;
@@ -301,7 +301,7 @@ int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         goto finish;
     }
     EVP_MD_CTX_init(evp_md_ctx);
-    ret = EVP_SignInit_ex(evp_md_ctx, EVP_md5(), NULL);
+    ret = EVP_SignInit_ex(evp_md_ctx, EVP_sha512(), NULL);
     if (ret != 1) {
         printf("EVP_SignInit_ex failed, ret = %d\n", ret);
         goto finish;

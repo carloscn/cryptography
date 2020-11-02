@@ -196,6 +196,33 @@ src/mbedtls_md_sha.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\carlos_openmbed.dir\build.make CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.s
 .PHONY : src/mbedtls_md_sha.c.s
 
+src/openssl_ecc.obj: src/openssl_ecc.c.obj
+
+.PHONY : src/openssl_ecc.obj
+
+# target to build an object file
+src/openssl_ecc.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\carlos_openmbed.dir\build.make CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj
+.PHONY : src/openssl_ecc.c.obj
+
+src/openssl_ecc.i: src/openssl_ecc.c.i
+
+.PHONY : src/openssl_ecc.i
+
+# target to preprocess a source file
+src/openssl_ecc.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\carlos_openmbed.dir\build.make CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.i
+.PHONY : src/openssl_ecc.c.i
+
+src/openssl_ecc.s: src/openssl_ecc.c.s
+
+.PHONY : src/openssl_ecc.s
+
+# target to generate assembly for a file
+src/openssl_ecc.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\carlos_openmbed.dir\build.make CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.s
+.PHONY : src/openssl_ecc.c.s
+
 src/openssl_md_sha.obj: src/openssl_md_sha.c.obj
 
 .PHONY : src/openssl_md_sha.obj
@@ -346,6 +373,9 @@ help:
 	@echo ... src/mbedtls_md_sha.obj
 	@echo ... src/mbedtls_md_sha.i
 	@echo ... src/mbedtls_md_sha.s
+	@echo ... src/openssl_ecc.obj
+	@echo ... src/openssl_ecc.i
+	@echo ... src/openssl_ecc.s
 	@echo ... src/openssl_md_sha.obj
 	@echo ... src/openssl_md_sha.i
 	@echo ... src/openssl_md_sha.s

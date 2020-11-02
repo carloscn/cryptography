@@ -104,10 +104,24 @@ CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.s"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\carwei01\workspace\visual\cryptography\src\mbedtls_md_sha.c -o CMakeFiles\carlos_openmbed.dir\src\mbedtls_md_sha.c.s
 
+CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
+CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
+CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj: ../src/openssl_ecc.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj"
+	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\openssl_ecc.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\openssl_ecc.c
+
+CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.i"
+	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E C:\Users\carwei01\workspace\visual\cryptography\src\openssl_ecc.c > CMakeFiles\carlos_openmbed.dir\src\openssl_ecc.c.i
+
+CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.s"
+	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S C:\Users\carwei01\workspace\visual\cryptography\src\openssl_ecc.c -o CMakeFiles\carlos_openmbed.dir\src\openssl_ecc.c.s
+
 CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
 CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj: ../src/openssl_md_sha.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\openssl_md_sha.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\openssl_md_sha.c
 
 CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.i: cmake_force
@@ -121,7 +135,7 @@ CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.s: cmake_force
 CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
 CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj: ../src/openssl_rsa.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\openssl_rsa.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\openssl_rsa.c
 
 CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.i: cmake_force
@@ -135,7 +149,7 @@ CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.s: cmake_force
 CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
 CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj: ../src/openssl_sm2.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\openssl_sm2.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\openssl_sm2.c
 
 CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.i: cmake_force
@@ -149,7 +163,7 @@ CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.s: cmake_force
 CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
 CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj: ../src/test_case.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/carlos_openmbed.dir/src/test_case.c.obj"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\test_case.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\test_case.c
 
 CMakeFiles/carlos_openmbed.dir/src/test_case.c.i: cmake_force
@@ -163,7 +177,7 @@ CMakeFiles/carlos_openmbed.dir/src/test_case.c.s: cmake_force
 CMakeFiles/carlos_openmbed.dir/src/utils.c.obj: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/utils.c.obj: CMakeFiles/carlos_openmbed.dir/includes_C.rsp
 CMakeFiles/carlos_openmbed.dir/src/utils.c.obj: ../src/utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/carlos_openmbed.dir/src/utils.c.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/carlos_openmbed.dir/src/utils.c.obj"
 	C:\opt\mingw-w64\mingw64\bin\gcc.exe $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles\carlos_openmbed.dir\src\utils.c.obj   -c C:\Users\carwei01\workspace\visual\cryptography\src\utils.c
 
 CMakeFiles/carlos_openmbed.dir/src/utils.c.i: cmake_force
@@ -178,6 +192,7 @@ CMakeFiles/carlos_openmbed.dir/src/utils.c.s: cmake_force
 carlos_openmbed_OBJECTS = \
 "CMakeFiles/carlos_openmbed.dir/src/main.c.obj" \
 "CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.obj" \
+"CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj" \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj" \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj" \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj" \
@@ -189,6 +204,7 @@ carlos_openmbed_EXTERNAL_OBJECTS =
 
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/main.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.obj
+carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj
@@ -202,7 +218,7 @@ carlos_openmbed.exe: C:/opt/mbedtls-2.16.5/library/libmbedcrypto.a
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/linklibs.rsp
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/objects1.rsp
 carlos_openmbed.exe: CMakeFiles/carlos_openmbed.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Linking C executable carlos_openmbed.exe"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=C:\Users\carwei01\workspace\visual\cryptography\cmake-build-debug\CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking C executable carlos_openmbed.exe"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles\carlos_openmbed.dir\link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/carlos_openmbed.dir/src/main.c.obj"
   "CMakeFiles/carlos_openmbed.dir/src/mbedtls_md_sha.c.obj"
+  "CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.obj"
   "CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.obj"
   "CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.obj"
   "CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.obj"

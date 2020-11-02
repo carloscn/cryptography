@@ -84,10 +84,16 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/inc/openssl_ecc.h">
+			<Option target="carlos_openmbed"/>
+		</Unit>
 		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/main.c">
 			<Option target="carlos_openmbed"/>
 		</Unit>
 		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/mbedtls_md_sha.c">
+			<Option target="carlos_openmbed"/>
+		</Unit>
+		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/openssl_ecc.c">
 			<Option target="carlos_openmbed"/>
 		</Unit>
 		<Unit filename="C:/Users/carwei01/workspace/visual/cryptography/src/openssl_md_sha.c">
