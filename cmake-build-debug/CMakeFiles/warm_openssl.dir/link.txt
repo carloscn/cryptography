@@ -1,3 +1,0 @@
-"C:\opt\JetBrains\CLion 2020.2.1\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\warm_openssl.dir/objects.a
-C:\opt\mingw-w64\mingw64\bin\ar.exe cr CMakeFiles\warm_openssl.dir/objects.a @CMakeFiles\warm_openssl.dir\objects1.rsp
-C:\opt\mingw-w64\mingw64\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\warm_openssl.dir/objects.a -Wl,--no-whole-archive  -o warm_openssl.exe -Wl,--out-implib,libwarm_openssl.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\warm_openssl.dir\linklibs.rsp
