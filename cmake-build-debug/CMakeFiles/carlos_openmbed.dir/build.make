@@ -148,18 +148,18 @@ CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.s"
 	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/carlos/workspace/CLion/cryptography/src/openssl_sm2.c -o CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.s
 
-CMakeFiles/carlos_openmbed.dir/src/test_case.c.o: CMakeFiles/carlos_openmbed.dir/flags.make
-CMakeFiles/carlos_openmbed.dir/src/test_case.c.o: ../src/test_case.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/carlos_openmbed.dir/src/test_case.c.o"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/carlos_openmbed.dir/src/test_case.c.o   -c /home/carlos/workspace/CLion/cryptography/src/test_case.c
+CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o: CMakeFiles/carlos_openmbed.dir/flags.make
+CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o: ../src/unit_test.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o   -c /home/carlos/workspace/CLion/cryptography/src/unit_test.c
 
-CMakeFiles/carlos_openmbed.dir/src/test_case.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/carlos_openmbed.dir/src/test_case.c.i"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/carlos/workspace/CLion/cryptography/src/test_case.c > CMakeFiles/carlos_openmbed.dir/src/test_case.c.i
+CMakeFiles/carlos_openmbed.dir/src/unit_test.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/carlos_openmbed.dir/src/unit_test.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/carlos/workspace/CLion/cryptography/src/unit_test.c > CMakeFiles/carlos_openmbed.dir/src/unit_test.c.i
 
-CMakeFiles/carlos_openmbed.dir/src/test_case.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/carlos_openmbed.dir/src/test_case.c.s"
-	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/carlos/workspace/CLion/cryptography/src/test_case.c -o CMakeFiles/carlos_openmbed.dir/src/test_case.c.s
+CMakeFiles/carlos_openmbed.dir/src/unit_test.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/carlos_openmbed.dir/src/unit_test.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/carlos/workspace/CLion/cryptography/src/unit_test.c -o CMakeFiles/carlos_openmbed.dir/src/unit_test.c.s
 
 CMakeFiles/carlos_openmbed.dir/src/utils.c.o: CMakeFiles/carlos_openmbed.dir/flags.make
 CMakeFiles/carlos_openmbed.dir/src/utils.c.o: ../src/utils.c
@@ -183,7 +183,7 @@ carlos_openmbed_OBJECTS = \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.o" \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.o" \
 "CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.o" \
-"CMakeFiles/carlos_openmbed.dir/src/test_case.c.o" \
+"CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o" \
 "CMakeFiles/carlos_openmbed.dir/src/utils.c.o"
 
 # External object files for target carlos_openmbed
@@ -196,7 +196,7 @@ carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/openssl_ecc.c.o
 carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.o
 carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.o
 carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.o
-carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/test_case.c.o
+carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o
 carlos_openmbed: CMakeFiles/carlos_openmbed.dir/src/utils.c.o
 carlos_openmbed: CMakeFiles/carlos_openmbed.dir/build.make
 carlos_openmbed: /usr/local/openssl/lib/libssl.so

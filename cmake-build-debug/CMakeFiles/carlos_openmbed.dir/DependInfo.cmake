@@ -11,7 +11,7 @@ set(CMAKE_DEPENDS_CHECK_C
   "/home/carlos/workspace/CLion/cryptography/src/openssl_md_sha.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.o"
   "/home/carlos/workspace/CLion/cryptography/src/openssl_rsa.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.o"
   "/home/carlos/workspace/CLion/cryptography/src/openssl_sm2.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.o"
-  "/home/carlos/workspace/CLion/cryptography/src/test_case.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/test_case.c.o"
+  "/home/carlos/workspace/CLion/cryptography/src/unit_test.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o"
   "/home/carlos/workspace/CLion/cryptography/src/utils.c" "/home/carlos/workspace/CLion/cryptography/cmake-build-debug/CMakeFiles/carlos_openmbed.dir/src/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")

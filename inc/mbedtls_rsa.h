@@ -16,4 +16,7 @@
 #include <mbedtls/ctr_drbg.h>
 #include <mbedtls/platform.h>
 
+int mbedtls_generate_rsa_pem_key_files(const char *pub_keyfile, const char *pri_keyfile,
+                                       const unsigned char *passwd, int passwd_len, unsigned int key_size);
+
 #endif //CARLOS_OPENMBED_MBEDTLS_RSA_H

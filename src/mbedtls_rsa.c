@@ -3,11 +3,11 @@
 //
 #include "mbedtls_rsa.h"
 
-#define KEY_SIZE 2048
-#define EXPONENT 65537
+#define KEY_SIZE 512
+#define EXPONENT 0x10001L   //RSA_F4
 
-int mbedtls_generate_rsa_raw_key_files(const char *pub_keyfile, const char *pri_keyfile,
-                                        const unsigned char *passwd, int passwd_len)
+int mbedtls_gen_rsa_raw_key_files(const char *pub_keyfile, const char *pri_keyfile,
+                                       const unsigned char *passwd, int passwd_len, unsigned int key_size)
 {
     FILE *fpub = NULL;
     FILE *fpri = NULL;
@@ -35,7 +35,7 @@ int mbedtls_generate_rsa_raw_key_files(const char *pub_keyfile, const char *pri_
     fflush(stdout);
 
     mbedtls_printf("Generate the public key...\n");
-    ret = mbedtls_rsa_gen_key(&rsa, mbedtls_ctr_drbg_random, &ctr_drbg, KEY_SIZE,
+    ret = mbedtls_rsa_gen_key(&rsa, mbedtls_ctr_drbg_random, &ctr_drbg, key_size,
             EXPONENT);
     if (ret != 0) {
         mbedtls_printf("failed! mbedtls_rsa_gen_key return %d.\n", ret);
@@ -85,7 +85,6 @@ int mbedtls_generate_rsa_raw_key_files(const char *pub_keyfile, const char *pri_
         mbedtls_printf( " failed\n  ! mbedtls_mpi_write_file returned %d\n\n", ret );
         goto finish;
     }
-
     ret = MBEDTLS_EXIT_SUCCESS;
 finish:
     if( fpub  != NULL )
@@ -99,11 +98,10 @@ finish:
     mbedtls_ctr_drbg_free( &ctr_drbg );
     mbedtls_entropy_free( &entropy );
     return ret;
-
 }
 
-int mbedtls_generate_rsa_pem_key_files(const char *pub_keyfile, const char *pri_keyfile,
-                                        const unsigned char *passwd, int passwd_len)
+int mbedtls_gen_rsa_pem_key_files(const char *pub_keyfile, const char *pri_keyfile,
+                                        const unsigned char *passwd, int passwd_len,  unsigned int key_size)
 {
     int ret = MBEDTLS_EXIT_SUCCESS;
     mbedtls_pk_context key;
@@ -143,7 +141,7 @@ int mbedtls_generate_rsa_pem_key_files(const char *pub_keyfile, const char *pri_
     }
     rsa = mbedtls_pk_rsa(key);
     ret = mbedtls_rsa_gen_key(rsa, mbedtls_ctr_drbg_random, &ctr_drbg,
-                              KEY_SIZE, EXPONENT);
+                              key_size, EXPONENT);
     if (ret != 0) {
         mbedtls_printf("failed! mbedtls_rsa_gen_key to Key %d \n", ret);
         goto finish;
@@ -177,36 +175,41 @@ int mbedtls_generate_rsa_pem_key_files(const char *pub_keyfile, const char *pri_
         mbedtls_printf("failed! open pri pem file. \n");
         goto finish;
     }
-    if (fwrite(pem_out_buffer, 1, buffer_len, pri_fp) != len) {
+    if (fwrite(pem_out_buffer, 1, buffer_len, pri_fp) != buffer_len) {
         mbedtls_printf("failed! write key pem word len.\n");
         goto finish;
     }
-    fclose(pri_fp);
+    fclose(pri_fp); pri_fp = NULL;
 
     /* 5. saving the public key file */
     mbedtls_printf("[genkey]: Saving publibc key file.\n");
     memset(pem_out_buffer, 0, 16000);
+    //ret = mbedtls_pk_parse_keyfile(&key, pri_keyfile, NULL);
     ret = mbedtls_pk_write_pubkey_pem(&key, pem_out_buffer, 16000);
+    if (ret != 0) {
+        mbedtls_printf("failed! mbedtls_pk_write_pubkey_pem return %d\n", ret);
+        goto finish;
+    }
     buffer_len = strlen((char*)pem_out_buffer);
     pub_fp = fopen(pub_keyfile, "w");
     if (pub_fp == NULL) {
         mbedtls_printf("failed! write key pem file.\n");
         goto finish;
     }
-    if (fwrite(pem_out_buffer, 1, buffer_len, pri_fp)) {
+    if (fwrite(pem_out_buffer, 1, buffer_len, pub_fp) != buffer_len) {
         mbedtls_printf("failed! write key pem file length failed!\n");
         goto finish;
     }
-    fclose(pub_fp);
+    fclose(pub_fp); pub_fp = NULL;
+    ret = MBEDTLS_EXIT_SUCCESS;
+    mbedtls_printf("[genkey]: genkey finished.\n");
 finish:
     mbedtls_mpi_free( &N ); mbedtls_mpi_free( &P ); mbedtls_mpi_free( &Q );
     mbedtls_mpi_free( &D ); mbedtls_mpi_free( &E ); mbedtls_mpi_free( &DP );
     mbedtls_mpi_free( &DQ ); mbedtls_mpi_free( &QP );
     mbedtls_pk_free( &key );
-    if (rsa != NULL)
-        mbedtls_rsa_free(rsa);
-    mbedtls_entropy_free(&entropy);
-    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_ctr_drbg_free( &ctr_drbg );
+    mbedtls_entropy_free( &entropy );
     if (pri_fp != NULL)
         fclose(pri_fp);
     if (pub_fp != NULL)

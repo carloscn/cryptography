@@ -8,6 +8,7 @@
 #include "openssl_sm2.h"
 #include "openssl_md_sha.h"
 #include "mbedtls_md_sha.h"
+#include "mbedtls_rsa.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"

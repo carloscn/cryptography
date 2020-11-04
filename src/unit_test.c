@@ -6,7 +6,8 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "test_case.h"
+#include "unit_test.h"
+
 
 int test_evp_rsa_encrypt_decrypt()
 {
@@ -19,6 +20,7 @@ int test_evp_rsa_encrypt_decrypt()
     ret = openssl_evp_rsa_encrypt(plain_in, in_len, cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("error in encrypt %d\n", ret);
+        return ret;
     }
     printf("rsa plain text is : %s \n", plain_in);
     printf("rsa cipher len = %d text is :\n", out_len);
@@ -40,7 +42,8 @@ int test_evp_sm2_encrypt_decrypt()
 {
     int ret = 0, i = 0;
     unsigned char cipher_out[1024];
-    unsigned char plain_in[] = "hello carlos sm2...";
+    unsigned char plain_in[] = "hi carlos !!!";
+    FILE *file = NULL;
     size_t out_len = 1024;
     size_t in_len = strlen(plain_in);
 
@@ -54,6 +57,9 @@ int test_evp_sm2_encrypt_decrypt()
     for (i = 0; i < out_len; i ++) {
         printf("%02X", cipher_out[i]);
     }
+    file = fopen("enc", "w");
+    fwrite(cipher_out, 1, out_len, file);
+    fclose(file);
     printf("\n");
     memset(plain_in, '\0', in_len);
     in_len = 1;
@@ -132,7 +138,7 @@ int test_evp_rsa_signature_verify()
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
 
-    ret = openssl_evp_rsa_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, "12345");
+    ret = openssl_evp_rsa_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("rsa signature failed!\n");
         return ret;

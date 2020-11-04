@@ -92,7 +92,13 @@
 				</MakeCommands>
 			</Target>
 		</Build>
+		<Unit filename="/home/carlos/workspace/CLion/cryptography/inc/mbedlts_cfg.h">
+			<Option target="carlos_openmbed"/>
+		</Unit>
 		<Unit filename="/home/carlos/workspace/CLion/cryptography/inc/mbedtls_rsa.h">
+			<Option target="carlos_openmbed"/>
+		</Unit>
+		<Unit filename="/home/carlos/workspace/CLion/cryptography/inc/openssl_cfg.h">
 			<Option target="carlos_openmbed"/>
 		</Unit>
 		<Unit filename="/home/carlos/workspace/CLion/cryptography/inc/openssl_ecc.h">
@@ -119,7 +125,7 @@
 		<Unit filename="/home/carlos/workspace/CLion/cryptography/src/openssl_sm2.c">
 			<Option target="carlos_openmbed"/>
 		</Unit>
-		<Unit filename="/home/carlos/workspace/CLion/cryptography/src/test_case.c">
+		<Unit filename="/home/carlos/workspace/CLion/cryptography/src/unit_test.c">
 			<Option target="carlos_openmbed"/>
 		</Unit>
 		<Unit filename="/home/carlos/workspace/CLion/cryptography/src/utils.c">

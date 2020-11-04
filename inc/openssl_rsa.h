@@ -12,9 +12,13 @@
 #include <openssl/bn.h>
 #include <openssl/err.h>
 #include <openssl/x509.h>
+#include "openssl_cfg.h"
 
-int generate_rsa_key_files(const char *pub_keyfile, const char *pri_keyfile,
-                           const unsigned char *passwd, int passwd_len);
+int openssl_gen_rsa_pkcs1_pem_files(const char *pub_keyfile, const char *pri_keyfile,
+                           const unsigned char *passwd, int passwd_len, unsigned int key_size);
+
+int openssl_gen_rsa_pkcs8_pem_files(const char *pub_keyfile, const char *pri_keyfile,
+                                    const unsigned char *passwd, int passwd_len, unsigned int key_size);
 /*openssl rsa decrypt evp using*/
 int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
                             unsigned char *plain_text, size_t *plain_len,

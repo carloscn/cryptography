@@ -312,32 +312,32 @@ src/openssl_sm2.c.s:
 	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.s
 .PHONY : src/openssl_sm2.c.s
 
-src/test_case.o: src/test_case.c.o
+src/unit_test.o: src/unit_test.c.o
 
-.PHONY : src/test_case.o
+.PHONY : src/unit_test.o
 
 # target to build an object file
-src/test_case.c.o:
-	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/test_case.c.o
-.PHONY : src/test_case.c.o
+src/unit_test.c.o:
+	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o
+.PHONY : src/unit_test.c.o
 
-src/test_case.i: src/test_case.c.i
+src/unit_test.i: src/unit_test.c.i
 
-.PHONY : src/test_case.i
+.PHONY : src/unit_test.i
 
 # target to preprocess a source file
-src/test_case.c.i:
-	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/test_case.c.i
-.PHONY : src/test_case.c.i
+src/unit_test.c.i:
+	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/unit_test.c.i
+.PHONY : src/unit_test.c.i
 
-src/test_case.s: src/test_case.c.s
+src/unit_test.s: src/unit_test.c.s
 
-.PHONY : src/test_case.s
+.PHONY : src/unit_test.s
 
 # target to generate assembly for a file
-src/test_case.c.s:
-	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/test_case.c.s
-.PHONY : src/test_case.c.s
+src/unit_test.c.s:
+	$(MAKE) -f CMakeFiles/carlos_openmbed.dir/build.make CMakeFiles/carlos_openmbed.dir/src/unit_test.c.s
+.PHONY : src/unit_test.c.s
 
 src/utils.o: src/utils.c.o
 
@@ -396,9 +396,9 @@ help:
 	@echo "... src/openssl_sm2.o"
 	@echo "... src/openssl_sm2.i"
 	@echo "... src/openssl_sm2.s"
-	@echo "... src/test_case.o"
-	@echo "... src/test_case.i"
-	@echo "... src/test_case.s"
+	@echo "... src/unit_test.o"
+	@echo "... src/unit_test.i"
+	@echo "... src/unit_test.s"
 	@echo "... src/utils.o"
 	@echo "... src/utils.i"
 	@echo "... src/utils.s"

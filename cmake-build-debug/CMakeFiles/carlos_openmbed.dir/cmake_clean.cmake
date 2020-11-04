@@ -6,7 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/carlos_openmbed.dir/src/openssl_md_sha.c.o"
   "CMakeFiles/carlos_openmbed.dir/src/openssl_rsa.c.o"
   "CMakeFiles/carlos_openmbed.dir/src/openssl_sm2.c.o"
-  "CMakeFiles/carlos_openmbed.dir/src/test_case.c.o"
+  "CMakeFiles/carlos_openmbed.dir/src/unit_test.c.o"
   "CMakeFiles/carlos_openmbed.dir/src/utils.c.o"
   "carlos_openmbed"
   "carlos_openmbed.pdb"
