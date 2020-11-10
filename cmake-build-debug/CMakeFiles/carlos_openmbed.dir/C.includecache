@@ -132,18 +132,6 @@ assert.h
 unit_test.h
 /home/carlos/workspace/CLion/cryptography/src/unit_test.h
 
-/home/carlos/workspace/CLion/cryptography/src/openssl_rsa.c
-stdio.h
--
-stdlib.h
--
-string.h
--
-stdint.h
--
-openssl_rsa.h
-/home/carlos/workspace/CLion/cryptography/src/openssl_rsa.h
-
 /usr/local/mbedtls/include/mbedtls/aes.h
 config.h
 /usr/local/mbedtls/include/mbedtls/config.h

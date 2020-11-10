@@ -144,7 +144,9 @@ int openssl_evp_rsa_encrypt(	unsigned char *plain_text, size_t plain_len,
                                 unsigned char *pem_file)
 {
     int ret = 0;
+#ifndef PKCS8
     RSA *rsa = NULL;
+#endif
     EVP_PKEY* public_evp_key = NULL;
     FILE *fp = NULL;
     BIO *bp = NULL;
@@ -188,14 +190,22 @@ int openssl_evp_rsa_encrypt(	unsigned char *plain_text, size_t plain_len,
         printf("BIO_read_filename %s failed,  ret = %d\n", pem_file, ret);
         goto finish;
     }
+#ifdef PKCS8
     public_evp_key = PEM_read_bio_PUBKEY(bp, &public_evp_key, NULL, NULL);
     if (public_evp_key == NULL) {
         ret = -1;
         printf("open_public_key %s failed to PEM_read_bio_RSAPublicKey Failed, ret=%d\n", pem_file, ret);
         goto finish;
     }
-    //EVP_PKEY_assign_RSA(public_evp_key, rsa);
-
+#else
+    rsa = PEM_read_bio_RSAPublicKey(bp, &rsa, NULL, NULL);
+    if (rsa == NULL) {
+        ret = -1;
+        printf("open RSAPublicKey failed.\n");
+        goto finish;
+    }
+    EVP_PKEY_assign_RSA(public_evp_key, rsa);
+#endif
     /*do cipher.*/
     ctx = EVP_PKEY_CTX_new(public_evp_key, NULL);
     if (ctx == NULL) {
@@ -238,7 +248,9 @@ int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
     int ret = 0;
     size_t out_len = 0;
     EVP_PKEY* private_evp_key = NULL;
+#ifndef PKCS8
     RSA *rsa = NULL;
+#endif
     BIO *bp = NULL;
     FILE *fp = NULL;
     EVP_PKEY_CTX *ctx = NULL;
@@ -272,10 +284,8 @@ int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
     }
     /*read private key from pem file.*/
     ret = BIO_read_filename(bp, pem_file);
-    rsa = PEM_read_bio_RSAPrivateKey(bp, &rsa, NULL, (void*)passwd);
-    if (rsa == NULL) {
+    if (ret != OPSSL_OK) {
         ret = -1;
-        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
         goto finish;
     }
     private_evp_key = EVP_PKEY_new();
@@ -284,7 +294,23 @@ int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
         printf("open_private_key EVP_PKEY_new failed\n");
         goto finish;
     }
+#ifdef PKCS8
+    private_evp_key = PEM_read_bio_PrivateKey(bp, private_evp_key, (void*)passwd, NULL);
+    if (private_evp_key == NULL) {
+        ret = -1;
+        printf("PEM read bio PrivateKey faield\n");
+        goto finish;
+    }
+#else
+    rsa = PEM_read_bio_RSAPrivateKey(bp, &rsa, NULL, (void*)passwd);
+    if (rsa == NULL) {
+        ret = -1;
+        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
+        goto finish;
+    }
+
     EVP_PKEY_assign_RSA(private_evp_key, rsa);
+#endif
     /*do cipher.*/
     ctx = EVP_PKEY_CTX_new(private_evp_key, NULL);
     if (ctx == NULL) {
@@ -294,11 +320,14 @@ int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
     }
     ret = EVP_PKEY_decrypt_init(ctx);
     if (ret != 1) {
+        ret = -1;
         printf("rsa_private_key decrypt failed to EVP_PKEY_decrypt_init. ret = %d\n", ret);
         goto finish;
     }
     ret = EVP_PKEY_CTX_set_rsa_padding(ctx, EVP_PADDING_PKCS7);
+
     if (ret != 1) {
+        ret = -1;
         printf("EVP_PKEY_CTX_set_rsa_padding failed. ret = %d\n", ret);
         goto finish;
     }
@@ -326,8 +355,6 @@ int openssl_evp_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
     return ret;
 }
 
-
-
 // RSA_PKCS1_PADDING  RSA_OAEP_PADDING
 int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
                               unsigned char *result, size_t *result_len,
@@ -336,7 +363,9 @@ int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
     int ret = 0;
     FILE *fp = NULL;
     EVP_PKEY* private_evp_key = NULL;
+#ifndef PKC8
     RSA *rsa = NULL;
+#endif
     BIO *bp = NULL;
     EVP_PKEY_CTX *ctx = NULL;
     EVP_MD_CTX *evp_md_ctx = NULL;
@@ -369,10 +398,8 @@ int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         goto finish;
     }
     ret = BIO_read_filename(bp, priv_pem_file);
-    rsa = PEM_read_bio_RSAPrivateKey(bp, &rsa, NULL, (void*)passwd);
-    if (rsa == NULL) {
+    if (ret != OPSSL_OK) {
         ret = -1;
-        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
         goto finish;
     }
     private_evp_key = EVP_PKEY_new();
@@ -381,7 +408,22 @@ int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         printf("open_private_key EVP_PKEY_new failed\n");
         goto finish;
     }
-    EVP_PKEY_assign_RSA(private_evp_key, rsa);
+#ifdef PKCS8
+    private_evp_key = PEM_read_bio_PrivateKey(bp, private_evp_key, (void*)passwd, NULL);
+    if (private_evp_key == NULL) {
+        ret = -1;
+        printf("open_private_key EVP_PKEY_new failed\n");
+        goto finish;
+    }
+#else
+    rsa = PEM_read_bio_RSAPrivateKey(bp, &rsa, (void*)passwd, NULL);
+    if (rsa == NULL) {
+        ret = -1;
+        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
+        goto finish;
+    }
+   EVP_PKEY_assign_RSA(private_evp_key, rsa);
+#endif
     /*do signature*/
     evp_md_ctx = EVP_MD_CTX_new();
     if (evp_md_ctx == NULL) {
@@ -390,18 +432,21 @@ int openssl_evp_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         goto finish;
     }
     EVP_MD_CTX_init(evp_md_ctx);
-    ret = EVP_SignInit_ex(evp_md_ctx, EVP_sha512(), NULL);
+    ret = EVP_SignInit_ex(evp_md_ctx, EVP_md5(), NULL);
     if (ret != 1) {
+        ret = -1;
         printf("EVP_SignInit_ex failed, ret = %d\n", ret);
         goto finish;
     }
     ret = EVP_SignUpdate(evp_md_ctx, sign_rom, sign_rom_len);
     if (ret != 1) {
+        ret = -1;
         printf("EVP_SignUpdate failed, ret = %d\n", ret);
         goto finish;
     }
     ret = EVP_SignFinal(evp_md_ctx, result, (unsigned int*)result_len, private_evp_key);
     if (ret != 1) {
+        ret = -1;
         printf("EVP_SignFinal failed, ret = %d\n", ret);
         goto finish;
     }
@@ -425,7 +470,9 @@ int openssl_evp_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
     int ret = 0;
     FILE *fp = NULL;
     EVP_PKEY* public_evp_key = NULL;
+#ifndef PKCS8
     RSA *rsa = NULL;
+#endif
     BIO *bp = NULL;
     EVP_PKEY_CTX *ctx = NULL;
     EVP_MD_CTX *evp_md_ctx = NULL;
@@ -457,19 +504,28 @@ int openssl_evp_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
         ret = -1;
         goto finish;
     }
+    public_evp_key = EVP_PKEY_new();
     ret = BIO_read_filename(bp, pub_pem_file);
+    if (ret != OPSSL_OK) {
+        ret = -1;
+        goto finish;
+    }
+#ifdef PKCS8
+    public_evp_key = PEM_read_bio_PUBKEY(bp, &public_evp_key, NULL, NULL);
+    if (public_evp_key == NULL) {
+        ret = -1;
+        printf("open_public_key %s failed to PEM_read_bio_RSAPublicKey Failed, ret=%d\n", pub_pem_file, ret);
+        goto finish;
+    }
+#else
     rsa = PEM_read_bio_RSAPublicKey(bp, NULL, NULL, NULL);
     if (rsa == NULL) {
         ret = -1;
         printf("open_public_key failed to PEM_read_bio_RSAPublicKey Failed, ret=%d\n", ret);
         goto finish;
     }
-    public_evp_key = EVP_PKEY_new();
-    if (public_evp_key == NULL) {
-        ret = -1;
-        goto finish;
-    }
     EVP_PKEY_assign_RSA(public_evp_key, rsa);
+#endif
     /*do verify*/
     evp_md_ctx = EVP_MD_CTX_new();
     if (evp_md_ctx == NULL) {
