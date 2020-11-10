@@ -23,9 +23,14 @@ ELSEIF(APPLE)
     SET(openssl_dir /usr/local/openssl)
     SET(mbedtls_dir /usr/local/include)
     MESSAGE(STATUS "Now is apple")
-    include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
-    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
-    link_libraries(ssl libcrypto mbedtls mbedcrypto)
+    include_directories(${openssl_dir}/include ${mbedtls_dir}/../include ./inc)
+    include_directories(${openssl_dir}/lib ${mbedtls_dir}/../library)
+    #link_libraries(ssl libcrypto mbedtls mbedcrypto)
+    link_libraries(
+            ${openssl_dir}/lib/libssl.a
+            ${openssl_dir}/lib/libcrypto.a
+            ${mbedtls_dir}/../lib/libmbedtls.a
+            ${mbedtls_dir}/../lib/libmbedcrypto.a)
     add_executable(${PROJECT_NAME} ${SRC_PATH})
 
 ELSEIF(UNIX)
