@@ -1,6 +1,0 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/carlos/workspace/Clion/warm_rsa_md_sha
--- operation system is Darwin-19.6.0
--- Now is apple
--- Configuring done
--- Generating done
--- Build files have been written to: /Users/carlos/workspace/Clion/warm_rsa_md_sha/cmake-build-debug

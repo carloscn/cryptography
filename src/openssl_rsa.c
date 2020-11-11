@@ -6,7 +6,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "openssl_rsa.h"
-
+#define PKCS8
 static const char rnd_seed[] = "string to make the random number generator initialized";
 
 int openssl_gen_rsa_pkcs1_pem_files(const char *pub_keyfile, const char *pri_keyfile,

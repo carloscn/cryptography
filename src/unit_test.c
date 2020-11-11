@@ -185,3 +185,37 @@ int test_evp_sm2_signature_verify()
     }
     return ret;
 }
+
+int test_mbedtls_ecc_enc_dec()
+{
+    int ret = 0, i = 0;
+    unsigned char cipher_out[1024];
+    unsigned char plain_in[] = "hi carlos !!!";
+    FILE *file = NULL;
+    size_t out_len = 1024;
+    size_t in_len = strlen(plain_in);
+
+    ret = mbedtls_rsa_encrypt(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
+    if (ret != 0) {
+        printf("error in encrypt %d\n", ret);
+        return ret;
+    }
+    printf("mbedtls rsa plain text is : %s \n", plain_in);
+    printf("mbedtls rsa cipher len = %d text is :\n", out_len);
+    printf("     ->>>");
+    for (i = 0; i < out_len; i ++) {
+        printf("%02X", cipher_out[i]);
+    }
+    file = fopen("enc", "w");
+    fwrite(cipher_out, 1, out_len, file);
+    fclose(file);
+    printf("\n");
+    memset(plain_in, '\0', in_len);
+    in_len = 1;
+    ret = mbedtls_rsa_decrypt(cipher_out, out_len, plain_in, &in_len, PRIVATE_RSA_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("error in decrypt %d\n", ret);
+    }
+    printf("mbedtls rsa decrypt len = %d  and text is : %s \n", in_len, plain_in);
+    return ret;
+}

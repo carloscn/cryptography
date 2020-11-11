@@ -1,5 +1,7 @@
 //
 // Created by carlos on 2020/11/2.
+// https://tls.mbed.org/kb/cryptography/asn0-key-structures-in-der-and-pem
+// https://tls.mbed.org/kb/how-to/encrypt-and-decrypt-with-rsa
 //
 #include "mbedtls_rsa.h"
 
@@ -217,12 +219,17 @@ finish:
     return ret;
 }
 
-int mbedtls_evp_rsa_encrypt(unsigned char *plain_text, size_t plain_len,
-                            unsigned char *cipher_text, size_t *cipher_len,
-                            unsigned char *pem_file)
+int mbedtls_ecc_encrypt(unsigned char *plain_text, size_t plain_len,
+                        unsigned char *cipher_text, size_t *cipher_len,
+                        unsigned char *pem_file)
 {
     int ret = 0;
     FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_pk_encrypt";
 
     /* 1. check input condition. */
     if (plain_text == NULL || plain_len == 0 || cipher_text == NULL || *cipher_len == 0) {
@@ -244,10 +251,452 @@ int mbedtls_evp_rsa_encrypt(unsigned char *plain_text, size_t plain_len,
     fclose(fp);
     fp = NULL;
 
-    /* 2. using the mbedtls lib to encrypt msg. */
+    /* 2. using the mbedtls interface to encrypt msg. */
+    /* note: For a 2048 bit RSA key, the maximum you can encrypt is 245 bytes (or 1960 bits). */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the public key */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_public_keyfile(&pk, pem_file);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 encrypt data */
+    ret = mbedtls_pk_encrypt(&pk, plain_text, plain_len, \
+                             buf, cipher_len, \
+                             sizeof(buf), \
+                             mbedtls_ctr_drbg_random, \
+                             &ctr_drbg);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_encrypt returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    /* 2.4 mv data to cipher text */
+    memcpy(cipher_text, buf, *cipher_len);
+    ret = MBEDTLS_EXIT_SUCCESS;
 
+finish:
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
 
+int mbedtls_ecc_decrypt(unsigned char *cipher_text, size_t cipher_len,
+                        unsigned char *plain_text, size_t *plain_len,
+                        const unsigned char *pem_file, const unsigned char *passwd)
+{
+    int ret = 0;
+    FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_pk_decrypt";
+
+    /* 1. check input condition. */
+    if (plain_text == NULL || cipher_text == NULL || cipher_len == 0) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to decrypt msg. */
+    /* note: For a 2048 bit RSA key, the maximum you can encrypt is 245 bytes (or 1960 bits). */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the private key */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_keyfile(&pk, pem_file, passwd);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 decrypt data */
+    ret = mbedtls_pk_decrypt(&pk, cipher_text, cipher_len, \
+                             buf, plain_len, \
+                             sizeof(buf), \
+                             mbedtls_ctr_drbg_random, \
+                             &ctr_drbg);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_decrypt returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    /* 2.4 mv data to plain text */
+    memcpy(plain_text, buf, *plain_len);
+    ret = MBEDTLS_EXIT_SUCCESS;
+
+finish:
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+int mbedtls_rsa_encrypt(unsigned char *plain_text, size_t plain_len,
+                        unsigned char *cipher_text, size_t *cipher_len,
+                        unsigned char *pem_file)
+{
+    int ret = MBEDTLS_EXIT_FAILURE;
+    FILE *fp = NULL;
+    mbedtls_rsa_context *rsa = NULL;
+    mbedtls_entropy_context entropy;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_pk_context pk;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_rsa_pkcs1_encrypt";
+
+    /* 1. check input condition. */
+    if (plain_text == NULL || plain_len == 0 || cipher_text == NULL || *cipher_len == 0) {
+        printf("input parameters error, plain_text cipher_text or plain_len is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to encrypt msg. */
+    /* note: For a 2048 bit RSA key, the maximum you can encrypt is 245 bytes (or 1960 bits). */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the rsa public key PKCS#1 */
+    /* 2.2.1 note hash_id when the MBEDTLS_RSA_PKCS_V21, hash id need select mbedtls_md_type_t. */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_public_keyfile(&pk, pem_file);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    rsa = mbedtls_pk_rsa(pk);
+    if (rsa == NULL) {
+        mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 encrypt data */
+    ret = mbedtls_rsa_pkcs1_encrypt(rsa, mbedtls_ctr_drbg_random, \
+                                    &ctr_drbg, MBEDTLS_RSA_PUBLIC,
+                                    plain_len, plain_text, buf);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_rsa_pkcs1_encrypt returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    *cipher_len = rsa->len;
+    /* 2.4 mv data to cipher text */
+    memcpy(cipher_text, buf, *cipher_len);
+    ret = MBEDTLS_EXIT_SUCCESS;
 
     finish:
+    if (rsa != NULL)
+        mbedtls_rsa_free(rsa);
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
     return ret;
+}
+
+int mbedtls_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
+                        unsigned char *plain_text, size_t *plain_len,
+                        const unsigned char *pem_file, const unsigned char *passwd)
+{
+    int ret = 0;
+    FILE *fp = NULL;
+    mbedtls_rsa_context *rsa = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_rsa_pkcs1_decrypt";
+
+    /* 1. check input condition. */
+    if (plain_text == NULL || cipher_text == NULL || cipher_len == 0) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to decrypt msg. */
+    /* note: For a 2048 bit RSA key, the maximum you can encrypt is 245 bytes (or 1960 bits). */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the public key */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_keyfile(&pk, pem_file, passwd);
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_pk_parse_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    fflush(stdout);
+    rsa = mbedtls_pk_rsa(pk);
+    if (rsa == NULL) {
+        mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
+        goto finish;
+    }
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 decrypt data */
+    ret = mbedtls_rsa_pkcs1_decrypt(rsa, mbedtls_ctr_drbg_random, &ctr_drbg,\
+                                    MBEDTLS_RSA_PRIVATE, \
+                                    plain_len, cipher_text, \
+                                    buf, sizeof(buf));
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_decrypt returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    /* 2.4 mv data to plain text */
+    memcpy(plain_text, buf, rsa->len);
+    ret = MBEDTLS_EXIT_SUCCESS;
+
+    finish:
+    if (rsa != NULL)
+        mbedtls_rsa_free(rsa);
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+int mbedtls_ecc_signature(unsigned char *sign_rom, size_t sign_rom_len,
+                          unsigned char *result, size_t *result_len,
+                          const unsigned char *priv_pem_file, const unsigned char *passwd)
+{
+    int ret = MBEDTLS_EXIT_FAILURE;
+    FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_pk_signature";
+
+    /* 1. check input condition. */
+    if (sign_rom == NULL || result == NULL || sign_rom_len == 0) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == priv_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)priv_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to sign msg. */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the private key */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_keyfile(&pk, priv_pem_file, passwd);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 sign data */
+    ret = mbedtls_pk_sign(&pk, MBEDTLS_MD_NONE, NULL, 0, \
+                             sign_rom, sign_rom_len, \
+                             mbedtls_ctr_drbg_random, \
+                             &ctr_drbg);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_sign returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    /* 2.4 mv data to result text */
+    memcpy(result, buf, *result_len);
+    ret = MBEDTLS_EXIT_SUCCESS;
+
+    finish:
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+int mbedtls_ecc_verify(unsigned char *sign_rom, size_t sign_rom_len,
+                       unsigned char *result, size_t result_len,
+                       const unsigned char *pub_pem_file)
+{
+    int ret = 0;
+    FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_pk_verify";
+
+    /* 1. check input condition. */
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == pub_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pub_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to verify msg. */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    ret = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                 &entropy, (const unsigned char *) pers,
+                                 strlen(pers));
+    if (ret != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -ret );
+        goto finish;
+    }
+    /* 2.2 read the public key */
+    mbedtls_pk_init(&pk);
+    ret = mbedtls_pk_parse_public_keyfile(&pk, pub_pem_file);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* 2.3 encrypt data */
+    ret = mbedtls_pk_verify( &pk, MBEDTLS_MD_NONE, NULL, 0, sign_rom, sign_rom_len);
+    if (ret != 0) {
+        printf( " failed\n  ! mbedtls_pk_encrypt returned -0x%04x\n", -ret );
+        goto finish;
+    }
+    ret = MBEDTLS_EXIT_SUCCESS;
+
+    finish:
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+int mbedtls_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
+                          unsigned char *result, size_t *result_len,
+                          const unsigned char *priv_pem_file, const unsigned char *passwd)
+{
+
+}
+
+int mbedtls_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
+                       unsigned char *result, size_t result_len,
+                       const unsigned char *pub_pem_file)
+{
+
 }
