@@ -24,4 +24,7 @@ int test_mbedtls_md5();
 int test_evp_sm2_encrypt_decrypt();
 int test_evp_rsa_encrypt_decrypt();
 int test_mbedtls_ecc_enc_dec();
+int mbedtls_test_rsa_enc_dec();
+int mbedtls_test_ecc_sign_verfiy();
+int mbedtls_test_rsa_sign_verify();
 #endif //WARM_OPENSSL_TEST_CASE_H
