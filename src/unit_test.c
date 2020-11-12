@@ -195,7 +195,7 @@ int test_mbedtls_ecc_enc_dec()
     size_t out_len = 1024;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_ecc_encrypt(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
+    ret = mbedtls_rsa_pkcs8_encrypt(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("error in encrypt %d\n", ret);
         return ret;
@@ -212,7 +212,7 @@ int test_mbedtls_ecc_enc_dec()
     printf("\n");
     memset(plain_in, '\0', in_len);
     in_len = 1;
-    ret = mbedtls_ecc_decrypt(cipher_out, out_len, plain_in, &in_len, PRIVATE_RSA_KEY_FILE, NULL);
+    ret = mbedtls_rsa_pkcs8_decrypt(cipher_out, out_len, plain_in, &in_len, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("error in decrypt %d\n", ret);
     }
@@ -228,7 +228,7 @@ int mbedtls_test_rsa_enc_dec()
     size_t out_len = 1024;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_rsa_encrypt(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
+    ret = mbedtls_rsa_pkcs1_encryption(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("error in encrypt %d\n", ret);
         return ret;
@@ -245,7 +245,7 @@ int mbedtls_test_rsa_enc_dec()
     printf("\n");
     memset(plain_in, '\0', in_len);
     in_len = 1;
-    ret = mbedtls_rsa_decrypt(cipher_out, out_len, plain_in, &in_len, PRIVATE_RSA_KEY_FILE, NULL);
+    ret = mbedtls_rsa_pkcs1_decryption(cipher_out, out_len, plain_in, &in_len, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("error in decrypt %d\n", ret);
     }
@@ -261,7 +261,7 @@ int mbedtls_test_ecc_sign_verfiy()
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_ecc_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
+    ret = mbedtls_rsa_pkcs8_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("mbedtls ecc signature failed!\n");
         return ret;
@@ -272,7 +272,7 @@ int mbedtls_test_ecc_sign_verfiy()
     }
     printf("\n");
 
-    ret = mbedtls_ecc_verify(sign_out, out_len, plain_in, in_len, PUBLIC_RSA_KEY_FILE);
+    ret = mbedtls_rsa_pkcs8_verified(sign_out, out_len, plain_in, in_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("mbedtls ecc verify failed!\n");
     } else {
@@ -288,7 +288,7 @@ int mbedtls_test_rsa_sign_verify()
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_rsa_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
+    ret = mbedtls_rsa_pkcs1_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("mbedtls rsa signature failed!\n");
         return ret;
@@ -299,12 +299,10 @@ int mbedtls_test_rsa_sign_verify()
     }
     printf("\n");
 
-    ret = mbedtls_rsa_verify(sign_out, out_len, plain_in, in_len, PUBLIC_RSA_KEY_FILE);
+    ret = mbedtls_rsa_pkcs1_verified(sign_out, out_len, plain_in, in_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("mbedtls rsa verify failed!\n");
     } else {
         printf("mbedtls rsa verify succeed!\n");
     }
 }
-
-
