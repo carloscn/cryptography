@@ -3,7 +3,7 @@
 //
 
 #include "openssl_ecc.h"
-
+#include "openssl_cfg.h"
 int generate_ecc_key_files(const char *pub_keyfile, const char *pri_keyfile,
                            const unsigned char *passwd, int passwd_len)
 {
@@ -229,12 +229,108 @@ int openssl_evp_ecc_encrypt(	unsigned char *plain_text, size_t plain_len,
 
     return ret;
 }
-
+// not debug
 int openssl_evp_ecc_decryt(unsigned char *cipher_text, size_t cipher_len,
                            unsigned char *plain_text, size_t *plain_len,
                            const unsigned char *pem_file, const unsigned char *passwd)
 {
+    int ret = OPSSL_FAIL;
+    FILE *fp = NULL;
+    BIO *bio = NULL;
+    EVP_PKEY *pkey = NULL;
+    EC_KEY *pri_ec_key = NULL;
+    EVP_PKEY_CTX *pkey_ctx = NULL;
+    /* 1. check input condition. */
+    if (plain_text == NULL || cipher_text == NULL || cipher_len == 0) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    if (NULL == pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
 
+    /* 2. using the openssl evp interface to decrypt msg. */
+    /* 2.1 read private key to bio.  */
+    bio = BIO_new(BIO_s_file());
+    if (bio == NULL) {
+        printf("bio_new failed \n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = BIO_read_filename(bio, pem_file);
+    if (ret != OPSSL_OK) {
+        printf("bio read pem file failed.\n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    pri_ec_key = PEM_read_bio_ECPrivateKey(bio, &pri_ec_key, NULL, passwd);
+    if (pri_ec_key == NULL) {
+        printf("PEM read bio ECPrivateKey failed.\n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    pkey = EVP_PKEY_new();
+    if (pkey != NULL) {
+        printf("EVP_Pkey new failed\n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = EVP_PKEY_set1_EC_KEY(pkey, pri_ec_key);
+    if (ret != OPSSL_OK) {
+        printf("EVP_PKEY_set1_EC_KEY failed %d\n", ret);
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = EVP_PKEY_set_alias_type(pkey, EVP_PKEY_EC);
+    if (ret != OPSSL_OK) {
+        printf("EVP_PKEY_set_alias_type failed %d", ret);
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+
+    /* 2. decrypt the msg using the evp */
+    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    if (pkey_ctx == NULL) {
+        printf("EVP_PKEY_CTX_new failed\n");
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = EVP_PKEY_decrypt_init(pkey_ctx);
+    if (ret != OPSSL_OK) {
+        printf("EVP_PKEY_decrypt_init failed %d\n", ret);
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = EVP_PKEY_decrypt(pkey, plain_text, plain_len, cipher_text, cipher_len);
+    if (ret != OPSSL_OK) {
+        printf("EVP_PKEY_decrypt failed %d\n", ret);
+        ret = OPSSL_FAIL;
+        goto finish;
+    }
+    ret = OPSSL_OK;
+    finish:
+    if (fp != NULL)
+        fclose(fp);
+    if (bio != NULL)
+        BIO_free_all(bio);
+    if (pri_ec_key != NULL)
+        EC_KEY_free(pri_ec_key);
+    if (pkey_ctx != NULL)
+        EVP_PKEY_CTX_free(pkey_ctx);
+    if (pkey != NULL)
+        EVP_PKEY_free(pkey);
+    return ret;
 }
 int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
                                 unsigned char *result, size_t *result_len,
