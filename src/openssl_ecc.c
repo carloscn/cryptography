@@ -336,11 +336,167 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
                                 unsigned char *result, size_t *result_len,
                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
+    int ret = OPSSL_FAIL;
+    FILE *fp = NULL;
+    BIO *bio = NULL;
+    EVP_PKEY *pkey = NULL;
+    EC_KEY *pri_ec_key = NULL;
+    EVP_PKEY_CTX *pkey_ctx = NULL;
 
+    /*Check the user input.*/
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL || *result_len == 0) {
+        printf("input parameters error, content or len is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == priv_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        return ret;
+    }
+    fp = fopen((const char*)priv_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+    /*read private key from pem file to private_evp_key*/
+    //OpenSSL_add_all_algorithms();
+    bio = BIO_new(BIO_s_file());
+    if (bio == NULL) {
+        printf("BIO_new is failed.\n");
+        ret = -1;
+        goto finish;
+    }
+    ret = BIO_read_filename(bio, priv_pem_file);
+    if (ret != OPSSL_OK) {
+        ret = -1;
+        goto finish;
+    }
+    pkey = EVP_PKEY_new();
+    if (pkey == NULL) {
+        ret = -1;
+        printf("open_private_key EVP_PKEY_new failed\n");
+        goto finish;
+    }
+    pri_ec_key = PEM_read_bio_ECPrivateKey(bio, &pri_ec_key, (void*)passwd, NULL);
+    if (pri_ec_key == NULL) {
+        ret = -1;
+        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
+        goto finish;
+    }
+    EVP_PKEY_assign_EC_KEY(pkey, pri_ec_key);
+    /*do signature*/
+    pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    if (pkey_ctx == NULL) {
+        printf("EVP_MD_CTX_new failed.\n");
+        ret = -1;
+        goto finish;
+    }
+    ret = EVP_PKEY_sign_init(pkey_ctx);
+    if (ret != 1) {
+        ret = -1;
+        printf("EVP_SignInit_ex failed, ret = %d\n", ret);
+        goto finish;
+    }
+    ret = EVP_PKEY_sign(pkey_ctx, sign_rom, &sign_rom_len, NULL, 0);
+    if (ret != 1) {
+        ret = -1;
+        printf("EVP_SignUpdate failed, ret = %d\n", ret);
+        goto finish;
+    }
+    ret = 0;
+    finish:
+    if (pkey!= NULL)
+        EVP_PKEY_free(pkey);
+    if (bio != NULL)
+        BIO_free(bio);
+    if (pkey_ctx != NULL)
+        EVP_PKEY_CTX_free(pkey_ctx);
+    if (pri_ec_key != NULL)
+         EC_KEY_free(pri_ec_key);
+    return ret;
 }
 int openssl_evp_ecdsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
                              unsigned char *result, size_t result_len,
                              const unsigned char *pub_pem_file)
 {
+    int ret = 0;
+    FILE *fp = NULL;
+    EVP_PKEY* public_evp_key = NULL;
+    EC_KEY *ec_key = NULL;
+    BIO *bp = NULL;
+    EVP_PKEY_CTX *ctx = NULL;
 
+    /*Check the user input.*/
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL || result_len == 0) {
+        printf("input parameters error, content or len is NULL or 0.\n");
+        ret = -1;
+        goto finish;
+    }
+    if (NULL == pub_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -1;
+        goto finish;
+    }
+    fp = fopen((const char*)pub_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n ");
+        ret = -1;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+    /*read public key from pem file to private_evp_key*/
+    //OpenSSL_add_all_algorithms();
+    bp = BIO_new(BIO_s_file());
+    if (bp == NULL) {
+        printf("BIO_new is failed.\n");
+        ret = -1;
+        goto finish;
+    }
+    public_evp_key = EVP_PKEY_new();
+    ret = BIO_read_filename(bp, pub_pem_file);
+    if (ret != OPSSL_OK) {
+        ret = -1;
+        goto finish;
+    }
+    ec_key = PEM_read_bio_EC_PUBKEY(bp, &ec_key, NULL, NULL);
+    if (ec_key == NULL) {
+        ret = -1;
+        printf("open_public_key failed to PEM_read_bio_RSAPublicKey Failed, ret=%d\n", ret);
+        goto finish;
+    }
+    EVP_PKEY_assign_EC_KEY(public_evp_key, ec_key);
+    /*do verify*/
+    ctx = EVP_PKEY_CTX_new(public_evp_key, NULL);
+    if (ctx == NULL) {
+        printf("EVP_PKEY_CTX_new failed.\n");
+        ret = -1;
+        goto finish;
+    }
+    ret = EVP_PKEY_verify_init(ctx);
+    if (ret != 1) {
+        printf("EVP_PKEY_VerifyInit_ex failed, ret = %d\n", ret);
+        goto finish;
+    }
+    ret = EVP_PKEY_verify(ctx, sign_rom, (unsigned int)sign_rom_len, NULL, 0);
+    if (ret != 1) {
+        printf("EVP_VerifyFinal failed, ret = %d\n", ret);
+        goto finish;
+    }
+    ret = 0;
+    finish:
+    if (public_evp_key != NULL)
+        EVP_PKEY_free(public_evp_key);
+    if (bp != NULL)
+        BIO_free(bp);
+    if (ctx != NULL)
+        EVP_PKEY_CTX_free(ctx);
+    if (ec_key != NULL)
+        EC_KEY_free(ec_key);
+
+    return ret;
 }
