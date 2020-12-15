@@ -22,14 +22,9 @@ int main(void)
 //	test_md5();
 //	printf("--------------------------\nmain: test_evp_md5...\n--------------------------\n");
 //	test_evp_md5();
-//	printf("--------------------------\nmain: gen key pairs...\n--------------------------\n");
-//    ret = openssl_gen_rsa_pkcs8_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE, NULL, 0, 512);
-    ret = openssl_gen_rsa_pkcs1_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE, NULL, 0, 512);
-//    assert(ret == 0);
-//    printf("mbedtls generate the rsa pem keys\n");
-//    mbedtls_gen_rsa_pem_key_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE, NULL, 0, 512);
-	//printf("--------------------------\nmain: rsa encrypt using the public key and decrypt using the private key...\n--------------------------\n");
-//	ret = test_evp_rsa_encrypt_decrypt();
+	ret = test_evp_pkcs1_rsa_encrypt_decrypt();
+//	assert(ret == 0);
+    ret = test_evp_pkcs8_rsa_encrypt_decrypt();
 //	assert(ret == 0);
 //	printf("--------------------------\nmain: rsa signature verify...\n--------------------------\n");
 //	ret = test_evp_rsa_signature_verify();
@@ -42,7 +37,7 @@ int main(void)
 //	printf("----------------------\nmain:test mbedtls rsa enc dec...\n-----------------------\n");
 //    test_mbedtls_ecc_enc_dec();
 //    mbedtls_test_ecc_sign_verfiy();
-    mbedtls_test_rsa_sign_verify();
+//    mbedtls_test_rsa_sign_verify();
 //	printf("--------------------------\nmain: test end \n--------------------------\n");
 //    printf("--------------------------\nmain: test_evp_md5...\n--------------------------\n");
 //    test_evp_md5();
