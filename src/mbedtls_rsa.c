@@ -103,7 +103,7 @@ finish:
 }
 
 int mbedtls_gen_rsa_pem_key_files(const char *pub_keyfile, const char *pri_keyfile,
-                                        const unsigned char *passwd, int passwd_len,  unsigned int key_size)
+                                  const unsigned char *passwd, int passwd_len,  unsigned int key_size)
 {
     int ret = MBEDTLS_EXIT_SUCCESS;
     mbedtls_pk_context key;

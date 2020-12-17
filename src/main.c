@@ -22,12 +22,13 @@ int main(void)
 //	test_md5();
 //	printf("--------------------------\nmain: test_evp_md5...\n--------------------------\n");
 //	test_evp_md5();
-	ret = test_evp_pkcs1_rsa_encrypt_decrypt();
+//	ret = test_evp_pkcs1_rsa_encrypt_decrypt();
 //	assert(ret == 0);
     ret = test_evp_pkcs8_rsa_encrypt_decrypt();
 //	assert(ret == 0);
 //	printf("--------------------------\nmain: rsa signature verify...\n--------------------------\n");
-//	ret = test_evp_rsa_signature_verify();
+//	ret = test_evp_pkcs1_rsa_signature_verify();
+//    ret = test_evp_pkcs8_rsa_signature_verify();
 //	printf("--------------------------\nmain: gen sm2 key pairs...\n--------------------------\n");
 //	generate_sm2_key_files(PUBLIC_SM2_KEY_FILE, PRIVATE_SM2_KEY_FILE,NULL, 0);
 //	printf("--------------------------\nmain: sm2 encrypt using the public key and decrypt using the private key...\n--------------------------\n");

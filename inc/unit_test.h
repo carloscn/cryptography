@@ -17,7 +17,8 @@
 
 int openssl_md5_test_out(unsigned char *content, uint64_t len, unsigned char *out);
 int test_evp_sm2_signature_verify();
-int test_evp_rsa_signature_verify();
+int test_evp_pkcs1_rsa_signature_verify();
+int test_evp_pkcs8_rsa_signature_verify();
 int test_md5();
 int test_evp_md5();
 int test_mbedtls_md5();

@@ -10,7 +10,7 @@
 
 int test_evp_pkcs1_rsa_encrypt_decrypt()
 {
-#define TEST_BUFFER_SIZE    4096
+#define TEST_BUFFER_SIZE  2048
     int ret = 0, i = 0;
     unsigned char *cipher_out = NULL;
     unsigned char plain_in[TEST_BUFFER_SIZE];
@@ -18,6 +18,7 @@ int test_evp_pkcs1_rsa_encrypt_decrypt()
     size_t error_count = 0;
     size_t out_len = TEST_BUFFER_SIZE;
     size_t in_len = sizeof(plain_in) / sizeof(plain_in[0]);
+    srand(time(NULL));
     for (i = 0; i < in_len; i ++) {
         plain_in[i] = rand();
     }
@@ -25,7 +26,7 @@ int test_evp_pkcs1_rsa_encrypt_decrypt()
     ret = openssl_gen_rsa_pkcs1_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
                                           NULL, 0, RSA_LEN_1024);
     if (ret != 0) {
-        printf("gen pkcs8 key failed\n");
+        printf("gen pkcs1 key failed\n");
         goto finish;
     }
     ret = openssl_evp_pkcs1_rsa_encrypt(plain_in, in_len, &cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
@@ -53,13 +54,13 @@ int test_evp_pkcs1_rsa_encrypt_decrypt()
         goto finish;
     }
     printf("rsa decrypt len = %ld  and text is: \n", in_len);
-    for (i = 0; i < TEST_BUFFER_SIZE; i ++) {
+    for (i = 0; i < in_len; i ++) {
         if (i % 32 == 0)
             printf("\n");
         printf("0x%2X,", decrypt_out[i]);
     }
     printf("\n");
-    for (i = 0; i < TEST_BUFFER_SIZE; i ++) {
+    for (i = 0; i < in_len; i ++) {
         if (plain_in[i] != decrypt_out[i]) {
             printf("error pos: %d, error code 0x%2X ~ 0x%2X\n", i, decrypt_out[i], plain_in[i]);
             error_count ++;
@@ -76,7 +77,6 @@ int test_evp_pkcs1_rsa_encrypt_decrypt()
 
 int test_evp_pkcs8_rsa_encrypt_decrypt()
 {
-#define TEST_BUFFER_SIZE    4096
     int ret = 0, i = 0;
     unsigned char *cipher_out = NULL;
     unsigned char plain_in[TEST_BUFFER_SIZE];
@@ -119,13 +119,13 @@ int test_evp_pkcs8_rsa_encrypt_decrypt()
         goto finish;
     }
     printf("rsa decrypt len = %ld  and text is: \n", in_len);
-    for (i = 0; i < TEST_BUFFER_SIZE; i ++) {
+    for (i = 0; i < in_len; i ++) {
         if (i % 32 == 0)
             printf("\n");
         printf("0x%2X,", decrypt_out[i]);
     }
     printf("\n");
-    for (i = 0; i < TEST_BUFFER_SIZE; i ++) {
+    for (i = 0; i < in_len; i ++) {
         if (plain_in[i] != decrypt_out[i]) {
             printf("error pos: %d, error code 0x%2X ~ 0x%2X\n", i, decrypt_out[i], plain_in[i]);
             error_count ++;
@@ -232,15 +232,17 @@ int test_mbedtls_md5()
     return 0;
 }
 
-int test_evp_rsa_signature_verify()
+int test_evp_pkcs1_rsa_signature_verify()
 {
     int ret = 0, i = 0;
     unsigned char sign_out[1024];
     unsigned char plain_in[] = "hello carlos.";
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
-
-    ret = openssl_evp_rsa_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_RSA_KEY_FILE, NULL);
+    ret = openssl_gen_rsa_pkcs1_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
+                                          NULL, 0, RSA_LEN_1024);
+    ret = openssl_evp_pkcs1_rsa_signature(plain_in, in_len, sign_out, &out_len, RSA_SHA256,
+                                          PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("rsa signature failed!\n");
         return ret;
@@ -251,7 +253,38 @@ int test_evp_rsa_signature_verify()
     }
     printf("\n");
 
-    ret = openssl_evp_rsa_verify(sign_out, out_len, plain_in, in_len, PUBLIC_RSA_KEY_FILE);
+    ret = openssl_evp_pkcs1_rsa_verify(sign_out, out_len, plain_in, in_len, RSA_SHA256,
+                                       PUBLIC_RSA_KEY_FILE);
+    if (ret != 0) {
+        printf("rsa verify failed!\n");
+    } else {
+        printf("rsa verify succeed!\n");
+    }
+}
+
+int test_evp_pkcs8_rsa_signature_verify()
+{
+    int ret = 0, i = 0;
+    unsigned char sign_out[1024];
+    unsigned char plain_in[] = "hello carlos.";
+    size_t out_len = 256;
+    size_t in_len = strlen(plain_in);
+    ret = openssl_gen_rsa_pkcs8_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
+                                          NULL, 0, RSA_LEN_1024);
+    ret = openssl_evp_pkcs8_rsa_signature(plain_in, in_len, sign_out, &out_len, RSA_SHA256,
+                                          PRIVATE_RSA_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("rsa signature failed!\n");
+        return ret;
+    }
+    printf("rsa %s openssl sign len = %ld, signature result: \n", plain_in, out_len);
+    for(i = 0; i < out_len; i++) {
+        printf("%02X", sign_out[i]);
+    }
+    printf("\n");
+
+    ret = openssl_evp_pkcs8_rsa_verify(sign_out, out_len, plain_in, in_len, RSA_SHA256,
+                                       PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("rsa verify failed!\n");
     } else {
@@ -292,11 +325,14 @@ int test_mbedtls_ecc_enc_dec()
 {
     int ret = 0, i = 0;
     unsigned char cipher_out[1024];
-    unsigned char plain_in[] = "hi carlos !!!";
+    unsigned char plain_in[4096];
     FILE *file = NULL;
     size_t out_len = 1024;
-    size_t in_len = strlen(plain_in);
+    size_t in_len = sizeof(plain_in)/sizeof(plain_in[0]);
 
+    for (i = 0; i < 4096; i ++) {
+        plain_in[i] = rand();
+    }
     ret = mbedtls_rsa_pkcs8_encrypt(plain_in, strlen(plain_in), cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("error in encrypt %d\n", ret);
