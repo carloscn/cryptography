@@ -429,6 +429,13 @@ int openssl_evp_pkcs1_rsa_encrypt(unsigned char *plain_text, size_t plain_len,
     } else if (padding == RSA_PKCS1_OAEP_PADDING){
         printf("it is rsa pkcs1 oaep padding\n");
         bulk_len -= RSA_PADDING_OAEP_PKCS1_SIZE;
+        rc = EVP_PKEY_CTX_set_rsa_oaep_md(ctx, EVP_md5());
+        if (rc != OPSSL_OK) {
+            printf("set rsa oaep md failed\n");
+            ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+            goto finish;
+            bulk_len -= RSA_PADDING_OAEP_PKCS1_SIZE;
+        }
     }
     cipe_len = algo_len * (plain_len/bulk_len + ((plain_len%bulk_len)?1:0));
     printf("cipher msg need space size : %ld\n", cipe_len);
@@ -498,7 +505,7 @@ int openssl_evp_pkcs1_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
     int padding = 0;
 
     /*Check the user input.*/
-    if (*plain_len == 0 || cipher_text == NULL || cipher_len == 0) {
+    if (cipher_text == NULL || cipher_len == 0) {
         printf("input parameters error, plain_text cipher_text or plain_len is NULL or 0.\n");
         ret = -ERROR_COMMON_INPUT_PARAMETERS;
         goto finish;
@@ -549,6 +556,12 @@ int openssl_evp_pkcs1_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
         bulk_len -= RSA_PADDING_PKCS1_SIZE;
     } else if (padding == RSA_PKCS1_OAEP_PADDING) {
         bulk_len -= RSA_PADDING_OAEP_PKCS1_SIZE;
+        rc = EVP_PKEY_CTX_set_rsa_oaep_md(ctx, EVP_md5());
+        if (rc != OPSSL_OK) {
+            printf("set rsa oaep md failed\n");
+            ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+            goto finish;
+        }
     }
     deco_len = 0;
     for (i = 0; i < dec_times; i ++) {

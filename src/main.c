@@ -24,7 +24,7 @@ int main(void)
 //	test_evp_md5();
 //	ret = test_evp_pkcs1_rsa_encrypt_decrypt();
 //	assert(ret == 0);
-    ret = test_evp_pkcs8_rsa_encrypt_decrypt();
+//    ret = test_evp_pkcs8_rsa_encrypt_decrypt();
 //	assert(ret == 0);
 //	printf("--------------------------\nmain: rsa signature verify...\n--------------------------\n");
 //	ret = test_evp_pkcs1_rsa_signature_verify();
@@ -44,5 +44,5 @@ int main(void)
 //    test_evp_md5();
 //    printf("--------------------------\nmain: test_mbedtls_md5...\n--------------------------\n");
 //    test_mbedtls_md5();
-
+    test_mbedtls_rsa_encrypt_decrypt();
 }

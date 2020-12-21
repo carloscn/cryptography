@@ -374,7 +374,7 @@ finish:
 }
 
 int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
-                                 unsigned char *cipher_text, size_t *cipher_len,
+                                 unsigned char **cipher_text, size_t *cipher_len,
                                  unsigned char *pem_file)
 {
     int ret = MBEDTLS_EXIT_FAILURE;
@@ -383,11 +383,17 @@ int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
     mbedtls_entropy_context entropy;
     mbedtls_ctr_drbg_context ctr_drbg;
     mbedtls_pk_context pk;
-    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
     const char *pers = "mbedtls_rsa_pkcs1_encrypt";
+    unsigned char * msg_hook = NULL;
+    size_t bulk_size = 0, algo_len = 0;
+    size_t enc_times = 0, enc_len = 0;
+    size_t cacu_len = 0;
+    size_t reset_len = 0;
+    int padding_mode = 0;
+    int i = 0;
 
     /* 1. check input condition. */
-    if (plain_text == NULL || plain_len == 0 || cipher_text == NULL || *cipher_len == 0) {
+    if (plain_text == NULL || plain_len == 0 ||  *cipher_len == 0) {
         printf("input parameters error, plain_text cipher_text or plain_len is NULL or 0.\n");
         ret = -1;
         goto finish;
@@ -432,19 +438,52 @@ int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
         mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
         goto finish;
     }
+    /* padding:	MBEDTLS_RSA_PKCS_V15 or MBEDTLS_RSA_PKCS_V21(OAEP) */
+    /* hash id:
+     * The hash_id parameter is actually ignored when using MBEDTLS_RSA_PKCS_V15 padding.
+     * The chosen hash is always used for OEAP encryption. For PSS signatures,
+     * it's always used for making signatures, but can be overriden
+     * (and always is, if set to MBEDTLS_MD_NONE) for verifying them.*/
+    padding_mode = MBEDTLS_RSA_PKCS_V21;
+    mbedtls_rsa_set_padding(rsa, padding_mode, MBEDTLS_MD_MD5);
     fflush(stdout);
-    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
     /* 2.3 encrypt data */
-    ret = mbedtls_rsa_pkcs1_encrypt(rsa, mbedtls_ctr_drbg_random, \
-                                    &ctr_drbg, MBEDTLS_RSA_PUBLIC,
-                                    plain_len, plain_text, buf);
-    if (ret != 0) {
-        printf( " failed\n  ! mbedtls_rsa_pkcs1_encrypt returned -0x%04x\n", -ret );
+    algo_len = mbedtls_pk_get_len(&pk);
+    bulk_size = algo_len;
+    if (rsa->padding == MBEDTLS_RSA_PKCS_V15) {
+        bulk_size -= RSA_PADDING_PKCS1_SIZE;
+    } else if (padding_mode == MBEDTLS_RSA_PKCS_V21) {
+        bulk_size -= RSA_PADDING_OAEP_PKCS1_SIZE;
+    }
+    enc_times = (size_t)(plain_len / bulk_size + ((plain_len%bulk_size)?1:0));
+    enc_len = enc_times * algo_len;
+    *cipher_text = (uint8_t *)malloc(enc_len);
+    if (*cipher_text == NULL) {
+        ret = -ERROR_COMMON_MALLOC_FAILED;
+        mbedtls_printf(" error\n ! malloc cipher text buffer failed! ret = %d\n", ret);
         goto finish;
     }
-    *cipher_len = rsa->len;
-    /* 2.4 mv data to cipher text */
-    memcpy(cipher_text, buf, *cipher_len);
+    *cipher_len = 0;
+    reset_len = plain_len;
+    msg_hook = plain_text;
+    for (i = 0; i < enc_times; i ++) {
+        if (reset_len < bulk_size)
+            bulk_size = reset_len;
+        ret = mbedtls_rsa_pkcs1_encrypt(rsa, mbedtls_ctr_drbg_random, \
+                                    &ctr_drbg, MBEDTLS_RSA_PUBLIC,\
+                                    bulk_size,
+                                    msg_hook, \
+                                    (uint8_t*)(*cipher_text + i*algo_len));
+        if (ret != 0) {
+            printf(" failed\n  ! mbedtls_rsa_pkcs1_encrypt returned -0x%04x\n", -ret);
+            goto finish;
+        }
+        mbedtls_printf("bulk %d , enc len %ld\n", i, bulk_size);
+        cacu_len += rsa->len;
+        msg_hook += bulk_size;
+        reset_len -= bulk_size;
+    }
+    *cipher_len = cacu_len;
     ret = MBEDTLS_EXIT_SUCCESS;
 
     finish:
@@ -455,11 +494,15 @@ int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
     mbedtls_entropy_free(&entropy);
     if (fp != NULL)
         fclose(fp);
+    if (*cipher_text != NULL && ret != MBEDTLS_EXIT_SUCCESS) {
+        free(*cipher_text);
+        *cipher_text = NULL;
+    }
     return ret;
 }
 
 int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
-                                 unsigned char *plain_text, size_t *plain_len,
+                                 unsigned char **plain_text, size_t *plain_len,
                                  const unsigned char *pem_file, const unsigned char *passwd)
 {
     int ret = 0;
@@ -468,8 +511,12 @@ int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
     mbedtls_pk_context pk;
     mbedtls_ctr_drbg_context ctr_drbg;
     mbedtls_entropy_context entropy;
-    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
     const char *pers = "mbedtls_rsa_pkcs1_decrypt";
+    size_t algo_len = 0;
+    size_t dec_len = 0;
+    size_t out_len = 0;
+    int padding_mode = 0;
+    int i = 0;
 
     /* 1. check input condition. */
     if (plain_text == NULL || cipher_text == NULL || cipher_len == 0) {
@@ -517,18 +564,38 @@ int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
         mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
         goto finish;
     }
-    memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
+    /* padding:	MBEDTLS_RSA_PKCS_V15 or MBEDTLS_RSA_PKCS_V21(OAEP) */
+    /* hash id:
+     * The hash_id parameter is actually ignored when using MBEDTLS_RSA_PKCS_V15 padding.
+     * The chosen hash is always used for OEAP encryption. For PSS signatures,
+     * it's always used for making signatures, but can be overriden
+     * (and always is, if set to MBEDTLS_MD_NONE) for verifying them.*/
+    padding_mode = MBEDTLS_RSA_PKCS_V21;
+    mbedtls_rsa_set_padding(rsa, padding_mode, MBEDTLS_MD_MD5);
     /* 2.3 decrypt data */
-    ret = mbedtls_rsa_pkcs1_decrypt(rsa, mbedtls_ctr_drbg_random, &ctr_drbg,\
-                                    MBEDTLS_RSA_PRIVATE, \
-                                    plain_len, cipher_text, \
-                                    buf, sizeof(buf));
-    if (ret != 0) {
-        printf( " failed\n  ! mbedtls_pk_decrypt returned -0x%04x\n", -ret );
+    algo_len = mbedtls_pk_get_len(&pk);
+    *plain_text = (uint8_t *)malloc(cipher_len);
+    if (*plain_text == NULL) {
+        ret = -ERROR_COMMON_MALLOC_FAILED;
+        mbedtls_printf(" error\n ! malloc plain text buffer failed! ret = %d\n", ret);
         goto finish;
     }
-    /* 2.4 mv data to plain text */
-    memcpy(plain_text, buf, rsa->len);
+    *plain_len = 0;
+    for (i = 0; i < cipher_len/algo_len; i ++) {
+        ret = mbedtls_rsa_pkcs1_decrypt(rsa, mbedtls_ctr_drbg_random, &ctr_drbg, \
+                                        MBEDTLS_RSA_PRIVATE, \
+                                        &out_len,
+                                        (uint8_t *)(cipher_text + i*algo_len), \
+                                        (uint8_t *)(*plain_text + dec_len), \
+                                        algo_len);
+        if (ret != 0) {
+            printf(" failed\n  ! mbedtls_pk_decrypt returned -0x%04x\n", -ret);
+            goto finish;
+        }
+        mbedtls_printf("bulk %d, dec len %ld\n", i, out_len);
+        dec_len += out_len;
+    }
+    *plain_len = dec_len;
     ret = MBEDTLS_EXIT_SUCCESS;
 
     finish:
@@ -539,6 +606,10 @@ int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
     mbedtls_entropy_free(&entropy);
     if (fp != NULL)
         fclose(fp);
+    if (*plain_text != NULL && ret != MBEDTLS_EXIT_SUCCESS) {
+        free(*plain_text);
+        *plain_text = NULL;
+    }
     return ret;
 }
 

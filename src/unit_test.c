@@ -10,7 +10,7 @@
 
 int test_evp_pkcs1_rsa_encrypt_decrypt()
 {
-#define TEST_BUFFER_SIZE  2048
+#define TEST_BUFFER_SIZE 255
     int ret = 0, i = 0;
     unsigned char *cipher_out = NULL;
     unsigned char plain_in[TEST_BUFFER_SIZE];
@@ -140,6 +140,74 @@ int test_evp_pkcs8_rsa_encrypt_decrypt()
     return ret;
 }
 
+int test_mbedtls_rsa_encrypt_decrypt()
+{
+    int ret = 0, i = 0;
+    unsigned char *cipher_out = NULL;
+    unsigned char plain_in[TEST_BUFFER_SIZE];
+    unsigned char *decrypt_out = NULL;
+    size_t error_count = 0;
+    size_t out_len = TEST_BUFFER_SIZE;
+    size_t en_len = (size_t)(sizeof(plain_in) / sizeof(plain_in[0]));
+    size_t de_len = 0;
+    for (i = 0; i < en_len; i ++) {
+        plain_in[i] = rand();
+        if (i % 32 == 0)
+            printf("\n");
+        printf("0x%2X,", plain_in[i]);
+    }
+    printf("\n");
+    ret = openssl_gen_rsa_pkcs1_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
+                                          NULL, 0, RSA_LEN_1024);
+    if (ret != 0) {
+        printf("gen pkcs1 key failed\n");
+        goto finish;
+    }
+    printf("en len: %ld\n", en_len);
+    //ret = mbedtls_rsa_pkcs1_encryption(plain_in, en_len, &cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
+    ret = openssl_evp_pkcs1_rsa_encrypt(plain_in, en_len, &cipher_out, &out_len, PUBLIC_RSA_KEY_FILE);
+    if (ret != 0) {
+        printf("error in encrypt %d\n", ret);
+        goto finish;
+    }
+    printf("rsa cipher len = %ld text is :\n", out_len);
+    for (i = 0; i < out_len; i ++) {
+        if (i % 64 == 0)
+            printf("\n");
+        printf("%02X", cipher_out[i]);
+    }
+    printf("\n");
+    ret = mbedtls_rsa_pkcs1_decryption(cipher_out, out_len, &decrypt_out, &de_len, PRIVATE_RSA_KEY_FILE, "12345");
+    //ret = openssl_evp_pkcs1_rsa_decrypt(cipher_out, out_len, &decrypt_out, &de_len, PRIVATE_RSA_KEY_FILE, "12345");
+    if (ret != 0) {
+        printf("error in decrypt %d\n", ret);
+        goto finish;
+    }
+    if (de_len != en_len) {
+        printf("error: de_len != en_len\n");
+        goto finish;
+    }
+    printf("rsa decrypt len = %ld  and text is:\n", de_len);
+    for (i = 0; i < de_len; i ++) {
+        if (i % 32 == 0)
+            printf("\n");
+        printf("0x%2X,", decrypt_out[i]);
+    }
+    printf("\n");
+    for (i = 0; i < de_len; i ++) {
+        if (plain_in[i] != decrypt_out[i]) {
+            printf("error pos: %d, error code 0x%2X ~ 0x%2X\n", i, decrypt_out[i], plain_in[i]);
+            error_count ++;
+        }
+    }
+    printf("error count %ld\n", error_count);
+    finish:
+    if (cipher_out != NULL)
+        free(cipher_out);
+    if (decrypt_out != NULL)
+        free(decrypt_out);
+    return ret;
+}
 int test_evp_sm2_encrypt_decrypt()
 {
     int ret = 0, i = 0;
