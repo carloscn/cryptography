@@ -9,11 +9,14 @@
 #include "openssl_md_sha.h"
 #include "mbedtls_md_sha.h"
 #include "mbedtls_rsa.h"
+#include "mbedtls_ecc.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
 #define PRIVATE_RSA_KEY_FILE "rsaprikey.pem"
 #define PUBLIC_RSA_KEY_FILE "rsapubkey.pem"
+#define PRIVATE_ECC_KEY_FILE "eccprikey.pem"
+#define PUBLIC_ECC_KEY_FILE "eccpubkey.pem"
 
 int openssl_md5_test_out(unsigned char *content, uint64_t len, unsigned char *out);
 int test_evp_sm2_signature_verify();
@@ -30,4 +33,5 @@ int test_mbedtls_ecc_enc_dec();
 int mbedtls_test_rsa_enc_dec();
 int mbedtls_test_ecc_sign_verfiy();
 int mbedtls_test_rsa_sign_verify();
+int test_mbedtls_ecc_encrypt_decrypt();
 #endif //WARM_OPENSSL_TEST_CASE_H
