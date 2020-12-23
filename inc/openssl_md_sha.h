@@ -14,4 +14,5 @@
 #include <openssl/x509.h>
 int openssl_md5(unsigned char *content, uint64_t len, unsigned char *out);
 int openssl_evp_md5(unsigned char *content, uint64_t len, unsigned char *out);
+int openssl_evp_md_type(unsigned char *content, uint64_t *len, unsigned char *out, EVP_MD* md);
 #endif //WARM_OPENSSL_OPENSSL_MD_SHA_H

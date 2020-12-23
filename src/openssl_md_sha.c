@@ -87,3 +87,51 @@ int openssl_evp_md5(unsigned char *content, uint64_t len, unsigned char *out)
     ret = 0;
     return ret;
 }
+
+/*open ssl evp MD5 using*/
+int openssl_evp_md_type(unsigned char *content, uint64_t *len, unsigned char *out, EVP_MD* md)
+{
+#define EVP_OK	1
+    EVP_MD_CTX *evp_ctx = NULL;
+    unsigned char outmd[64];
+    int md_len = 0;
+    int i = 0;
+    int ret = 0;
+
+    if (content == NULL || out == NULL) {
+        ret = -1;
+        printf("input || output string is NULL.\n");
+        return ret;
+    }
+    evp_ctx = EVP_MD_CTX_new();
+    if (evp_ctx == NULL) {
+        printf("EVP_CIPHER_CTX_new failed.\n");
+        ret = -1;
+        return ret;
+    }
+    memset(outmd, 0, 16);
+    EVP_MD_CTX_init(evp_ctx);
+    ret = EVP_DigestInit_ex(evp_ctx, md, NULL);
+    if (ret != EVP_OK) {
+        EVP_MD_CTX_free(evp_ctx);
+        printf("EVP_DigestInit_ex Failed, ret=%d\n", ret);
+        return ret;
+    }
+    ret = EVP_DigestUpdate(evp_ctx, content, *len);
+    if (ret != EVP_OK) {
+        EVP_MD_CTX_free(evp_ctx);
+        printf("EVP_DigestUpdate Failed, ret=%d\n", ret);
+        return ret;
+    }
+    ret = EVP_DigestFinal_ex(evp_ctx, outmd, &md_len);
+    if (ret != EVP_OK) {
+        EVP_MD_CTX_free(evp_ctx);
+        printf("EVP_DigestFinal_ex Failed, ret=%d\n", ret);
+        return ret;
+    }
+    *len = md_len;
+    EVP_MD_CTX_free(evp_ctx);
+    memcpy(out, outmd, md_len);
+    ret = 0;
+    return ret;
+}

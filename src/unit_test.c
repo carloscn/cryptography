@@ -355,7 +355,7 @@ int test_mbedtls_md5()
 
     /*open ssl evp MD5 using*/
     memset(outmd, 0, 32);
-    ret = mbedtls_user_md(input_str, strlen(input_str), outmd,  "MD5");
+    ret = mbedtls_user_md_str(input_str, strlen(input_str), outmd,  "MD5");
     if (ret != 0) {
         printf("mbedtls_md5_test_out failed: %d\n", ret);
     }
@@ -376,7 +376,7 @@ int test_evp_pkcs1_rsa_signature_verify()
     size_t in_len = strlen(plain_in);
     ret = openssl_gen_rsa_pkcs1_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
                                           NULL, 0, RSA_LEN_1024);
-    ret = openssl_evp_pkcs1_rsa_signature(plain_in, in_len, sign_out, &out_len, RSA_SHA256,
+    ret = openssl_evp_pkcs1_rsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
                                           PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("rsa signature failed!\n");
@@ -388,7 +388,7 @@ int test_evp_pkcs1_rsa_signature_verify()
     }
     printf("\n");
 
-    ret = openssl_evp_pkcs1_rsa_verify(sign_out, out_len, plain_in, in_len, RSA_SHA256,
+    ret = openssl_evp_pkcs1_rsa_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
                                        PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("rsa verify failed!\n");
@@ -406,7 +406,7 @@ int test_evp_pkcs8_rsa_signature_verify()
     size_t in_len = strlen(plain_in);
     ret = openssl_gen_rsa_pkcs8_pem_files(PUBLIC_RSA_KEY_FILE, PRIVATE_RSA_KEY_FILE,
                                           NULL, 0, RSA_LEN_1024);
-    ret = openssl_evp_pkcs8_rsa_signature(plain_in, in_len, sign_out, &out_len, RSA_SHA256,
+    ret = openssl_evp_pkcs8_rsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
                                           PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         printf("rsa signature failed!\n");
@@ -418,7 +418,7 @@ int test_evp_pkcs8_rsa_signature_verify()
     }
     printf("\n");
 
-    ret = openssl_evp_pkcs8_rsa_verify(sign_out, out_len, plain_in, in_len, RSA_SHA256,
+    ret = openssl_evp_pkcs8_rsa_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
                                        PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
         printf("rsa verify failed!\n");
@@ -492,6 +492,7 @@ int test_mbedtls_ecc_enc_dec()
     printf("mbedtls rsa decrypt len = %ld  and text is : %s \n", in_len, plain_in);
     return ret;
 }
+#if 0
 int mbedtls_test_rsa_enc_dec()
 {
     int ret = 0, i = 0;
@@ -525,7 +526,8 @@ int mbedtls_test_rsa_enc_dec()
     printf("mbedtls rsa decrypt len = %ld  and text is : %s \n", in_len, plain_in);
     return ret;
 }
-
+#endif
+#if 0
 int mbedtls_test_rsa_sign_verfiy()
 {
     int ret = 0, i = 0;
@@ -552,7 +554,7 @@ int mbedtls_test_rsa_sign_verfiy()
         printf("mbedtls ecc verify succeed!\n");
     }
 }
-
+#endif
 int mbedtls_test_ecc_sign_verfiy()
 {
     int ret = 0, i = 0;
@@ -561,7 +563,7 @@ int mbedtls_test_ecc_sign_verfiy()
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, PRIVATE_ECC_KEY_FILE, NULL);
+    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA512, PRIVATE_ECC_KEY_FILE, NULL);
     if (ret != 0) {
         printf("mbedtls ecc signature failed!\n");
         return ret;
@@ -572,13 +574,14 @@ int mbedtls_test_ecc_sign_verfiy()
     }
     printf("\n");
 
-    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, PUBLIC_ECC_KEY_FILE);
+    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, M_SHA512, PUBLIC_ECC_KEY_FILE);
     if (ret != 0) {
         printf("mbedtls ecc verify failed!\n");
     } else {
         printf("mbedtls ecc verify succeed!\n");
     }
 }
+#if 0
 int mbedtls_test_rsa_sign_verify()
 {
     int ret = 0, i = 0;
@@ -603,5 +606,51 @@ int mbedtls_test_rsa_sign_verify()
         printf("mbedtls rsa verify failed!\n");
     } else {
         printf("mbedtls rsa verify succeed!\n");
+    }
+}
+#endif
+int test_evp_ecc_signature_verify()
+{
+    int ret = 0, i = 0;
+    unsigned char sign_out[1024];
+    unsigned char plain_in[] = "hello carlos.";
+    size_t out_len = 256;
+    size_t in_len = strlen(plain_in);
+    ret = openssl_evp_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
+                                      PRIVATE_ECC_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("oepnssl ecc signature failed!\n");
+        return ret;
+    }
+    printf("openssl ecc %s sign len = %ld, signature result: \n", plain_in, out_len);
+    for(i = 0; i < out_len; i++) {
+        printf("%02X", sign_out[i]);
+    }
+    printf("\n");
+    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
+                                      PRIVATE_ECC_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("ecc signature failed!\n");
+        return ret;
+    }
+    printf("mbedtls ecc %s sign len = %ld, signature result: \n", plain_in, out_len);
+    for(i = 0; i < out_len; i++) {
+        printf("%02X", sign_out[i]);
+    }
+    printf("\n");
+
+    ret = openssl_evp_ecdsa_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
+                                       PUBLIC_ECC_KEY_FILE);
+    if (ret != 0) {
+        printf("openssl ecc verify failed!\n");
+    } else {
+        printf("openssl ecc verify succeed!\n");
+    }
+    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, M_SHA256,
+                                       PUBLIC_ECC_KEY_FILE);
+    if (ret != 0) {
+        printf("mbedtls ecc verify failed!\n");
+    } else {
+        printf("mbedtls ecc verify succeed!\n");
     }
 }

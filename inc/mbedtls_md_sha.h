@@ -18,14 +18,8 @@
 #include <mbedtls/sha256.h>
 #include <mbedtls/sha512.h>
 
-typedef enum digest_scheme_t {
-    K_SHA1 = 0,
-    K_SHA224,
-    K_SHA256,
-    K_SHA384,
-    K_SHA512,
-    K_SM3
-} DIGEST_SELECT;
 
-int mbedtls_user_md(unsigned char *content, uint64_t len, unsigned char *out, const char *type);
+
+int mbedtls_user_md_str(unsigned char *content, uint64_t len, unsigned char *out, const unsigned char* type);
+int mbedtls_user_md_type(unsigned char *content, uint64_t len, unsigned char *out, mbedtls_md_type_t type);
 #endif //WARM_OPENSSL_MBEDTLS_MD_SHA_H

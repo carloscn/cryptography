@@ -5,7 +5,7 @@ MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
 
 set(CMAKE_C_STANDARD 99)
 AUX_SOURCE_DIRECTORY(src DIR_SRCS)
-SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h src/mbedtls_rsa.c inc/mbedtls_rsa.h inc/openssl_cfg.h inc/mbedlts_cfg.h src/mbedtls_ecc.c inc/mbedtls_ecc.h inc/errors.h)
+SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h src/mbedtls_rsa.c inc/mbedtls_rsa.h inc/openssl_cfg.h inc/mbedtls_cfg.h src/mbedtls_ecc.c inc/mbedtls_ecc.h inc/errors.h inc/cfg.h src/openssl_common.c inc/openssl_common.h inc/mbedtls_common.h src/mbedtls_common.c)
 IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
     SET(mbedtls_dir C:/opt/mbedtls-2.16.5)

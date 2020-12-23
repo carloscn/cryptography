@@ -219,7 +219,7 @@ finish:
     return ret;
 }
 
-int mbedtls_rsa_pkcs8_encrypt(unsigned char *plain_text, size_t plain_len,
+int mbedtls_rsa_pkcs8_encrypt(const unsigned char *plain_text, size_t plain_len,
                               unsigned char *cipher_text, size_t *cipher_len,
                               unsigned char *pem_file)
 {
@@ -296,7 +296,7 @@ finish:
     return ret;
 }
 
-int mbedtls_rsa_pkcs8_decrypt(unsigned char *cipher_text, size_t cipher_len,
+int mbedtls_rsa_pkcs8_decrypt(const unsigned char *cipher_text, size_t cipher_len,
                               unsigned char *plain_text, size_t *plain_len,
                               const unsigned char *pem_file, const unsigned char *passwd)
 {
@@ -373,7 +373,7 @@ finish:
     return ret;
 }
 
-int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
+int mbedtls_rsa_pkcs1_encryption(const unsigned char *plain_text, size_t plain_len,
                                  unsigned char **cipher_text, size_t *cipher_len,
                                  unsigned char *pem_file)
 {
@@ -501,7 +501,7 @@ int mbedtls_rsa_pkcs1_encryption(unsigned char *plain_text, size_t plain_len,
     return ret;
 }
 
-int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
+int mbedtls_rsa_pkcs1_decryption(const unsigned char *cipher_text, size_t cipher_len,
                                  unsigned char **plain_text, size_t *plain_len,
                                  const unsigned char *pem_file, const unsigned char *passwd)
 {
@@ -613,8 +613,9 @@ int mbedtls_rsa_pkcs1_decryption(unsigned char *cipher_text, size_t cipher_len,
     return ret;
 }
 
-int mbedtls_rsa_pkcs8_signature(unsigned char *sign_rom, size_t sign_rom_len,
+int mbedtls_rsa_pkcs8_signature(const unsigned char *sign_rom, size_t sign_rom_len,
                                 unsigned char *result, size_t *result_len,
+                                SCHEME_TYPE sch,
                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = MBEDTLS_EXIT_FAILURE;
@@ -670,7 +671,7 @@ int mbedtls_rsa_pkcs8_signature(unsigned char *sign_rom, size_t sign_rom_len,
     /* 2.3 sign data */
     /* For RSA, md_alg may be MBEDTLS_MD_NONE if hash_len != 0. For ECDSA, md_alg may never be MBEDTLS_MD_NONE. */
     /* 2.3.1 ecc need select hash padding, calculate hash. */
-    ret = mbedtls_user_md(sign_rom, sign_rom_len, hash, "MD5");
+    ret = mbedtls_user_md_type(sign_rom, sign_rom_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf(" failed!\n  hash: md_setup. returned :0x%4X\n", ret);
         goto finish;
@@ -697,8 +698,9 @@ int mbedtls_rsa_pkcs8_signature(unsigned char *sign_rom, size_t sign_rom_len,
     return ret;
 }
 
-int mbedtls_rsa_pkcs8_verified(unsigned char *sign_rom, size_t sign_rom_len,
-                               unsigned char *result, size_t result_len,
+int mbedtls_rsa_pkcs8_verified(const unsigned char *sign_rom, size_t sign_rom_len,
+                               const unsigned char *result, size_t result_len,
+                               SCHEME_TYPE sch,
                                const unsigned char *pub_pem_file)
 {
     int ret = 0;
@@ -753,7 +755,7 @@ int mbedtls_rsa_pkcs8_verified(unsigned char *sign_rom, size_t sign_rom_len,
     memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
     /* 2.3 encrypt data */
     /* 2.3.1 caculate hash */
-    ret = mbedtls_user_md(result, result_len, hash, "MD5");
+    ret = mbedtls_user_md_type(result, result_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf("caculate hash failed, ret = 0x%4x\n", ret);
         goto finish;
@@ -774,8 +776,9 @@ int mbedtls_rsa_pkcs8_verified(unsigned char *sign_rom, size_t sign_rom_len,
     return ret;
 }
 
-int mbedtls_rsa_pkcs1_signature(unsigned char *sign_rom, size_t sign_rom_len,
+int mbedtls_rsa_pkcs1_signature(const unsigned char *sign_rom, size_t sign_rom_len,
                                 unsigned char *result, size_t *result_len,
+                                SCHEME_TYPE sch,
                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = MBEDTLS_EXIT_FAILURE;
@@ -832,7 +835,7 @@ int mbedtls_rsa_pkcs1_signature(unsigned char *sign_rom, size_t sign_rom_len,
     /* 2.3 sign data */
     /* For RSA, md_alg may be MBEDTLS_MD_NONE if hash_len != 0. For ECDSA, md_alg may never be MBEDTLS_MD_NONE. */
     /* 2.3.1 ecc need select hash padding, calculate hash. */
-    ret = mbedtls_user_md(sign_rom, sign_rom_len, hash, "MD5");
+    ret = mbedtls_user_md_type(sign_rom, sign_rom_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf(" failed!\n  hash: md_setup. returned :0x%4X\n", ret);
         goto finish;
@@ -866,8 +869,9 @@ int mbedtls_rsa_pkcs1_signature(unsigned char *sign_rom, size_t sign_rom_len,
     return ret;
 }
 
-int mbedtls_rsa_pkcs1_verified(unsigned char *sign_rom, size_t sign_rom_len,
-                               unsigned char *result, size_t result_len,
+int mbedtls_rsa_pkcs1_verified(const unsigned char *sign_rom, size_t sign_rom_len,
+                               const unsigned char *result, size_t result_len,
+                               SCHEME_TYPE sch,
                                const unsigned char *pub_pem_file)
 {
     int ret = 0;
@@ -923,7 +927,7 @@ int mbedtls_rsa_pkcs1_verified(unsigned char *sign_rom, size_t sign_rom_len,
     memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
     /* 2.3 encrypt data */
     /* 2.3.1 caculate hash */
-    ret = mbedtls_user_md(result, result_len, hash, "MD5");
+    ret = mbedtls_user_md_type(result, result_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf("caculate hash failed, ret = 0x%4x\n", ret);
         goto finish;

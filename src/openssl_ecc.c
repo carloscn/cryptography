@@ -127,7 +127,7 @@ int generate_ecc_key_files(const char *pub_keyfile, const char *pri_keyfile,
 }
 
 /*openssl sm2 cipher evp using*/
-int openssl_evp_ecc_encrypt(	unsigned char *plain_text, size_t plain_len,
+int openssl_evp_ecc_encrypt(	const unsigned char *plain_text, size_t plain_len,
                                 unsigned char *cipher_text, size_t *cipher_len,
                                 unsigned char *pem_file)
 {
@@ -230,7 +230,7 @@ int openssl_evp_ecc_encrypt(	unsigned char *plain_text, size_t plain_len,
     return ret;
 }
 // not debug
-int openssl_evp_ecc_decryt(unsigned char *cipher_text, size_t cipher_len,
+int openssl_evp_ecc_decryt(const unsigned char *cipher_text, size_t cipher_len,
                            unsigned char *plain_text, size_t *plain_len,
                            const unsigned char *pem_file, const unsigned char *passwd)
 {
@@ -332,8 +332,10 @@ int openssl_evp_ecc_decryt(unsigned char *cipher_text, size_t cipher_len,
         EVP_PKEY_free(pkey);
     return ret;
 }
-int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
+
+int openssl_evp_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
                                 unsigned char *result, size_t *result_len,
+                                SCHEME_TYPE sch,
                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = OPSSL_FAIL;
@@ -342,9 +344,11 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
     EVP_PKEY *pkey = NULL;
     EC_KEY *pri_ec_key = NULL;
     EVP_PKEY_CTX *pkey_ctx = NULL;
+    uint8_t hash[64] = {0};
+    size_t hash_len = 0;
 
     /*Check the user input.*/
-    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL || *result_len == 0) {
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL) {
         printf("input parameters error, content or len is NULL or 0.\n");
         ret = -1;
         goto finish;
@@ -364,6 +368,7 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
     fp = NULL;
     /*read private key from pem file to private_evp_key*/
     //OpenSSL_add_all_algorithms();
+
     bio = BIO_new(BIO_s_file());
     if (bio == NULL) {
         printf("BIO_new is failed.\n");
@@ -387,12 +392,29 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
         goto finish;
     }
-    EVP_PKEY_assign_EC_KEY(pkey, pri_ec_key);
+    ret = EVP_PKEY_set1_EC_KEY(pkey, pri_ec_key);
+    if (ret != 1) {
+        ret = -1;
+        printf("EVP_PKEY_set1_EC_KEY failed\n");
+        goto finish;
+    }
+    ret = EVP_PKEY_set_alias_type(pkey, EVP_PKEY_EC);
+    if (ret != 1) {
+        printf("EVP_PKEY_set_alias_type to EVP_PKEY_SM2 failed! ret = %d\n", ret);
+        ret = -1;
+        goto finish;
+    }
     /*do signature*/
     pkey_ctx = EVP_PKEY_CTX_new(pkey, NULL);
     if (pkey_ctx == NULL) {
         printf("EVP_MD_CTX_new failed.\n");
         ret = -1;
+        goto finish;
+    }
+    hash_len = sign_rom_len;
+    ret = openssl_evp_md_type(sign_rom, &hash_len, hash, get_evp_scheme(sch));
+    if (ret != 0) {
+        printf("md type failed");
         goto finish;
     }
     ret = EVP_PKEY_sign_init(pkey_ctx);
@@ -401,7 +423,7 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
         printf("EVP_SignInit_ex failed, ret = %d\n", ret);
         goto finish;
     }
-    ret = EVP_PKEY_sign(pkey_ctx, sign_rom, &sign_rom_len, NULL, 0);
+    ret = EVP_PKEY_sign(pkey_ctx, result, result_len, hash, hash_len);
     if (ret != 1) {
         ret = -1;
         printf("EVP_SignUpdate failed, ret = %d\n", ret);
@@ -419,8 +441,9 @@ int openssl_evp_ecdsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
          EC_KEY_free(pri_ec_key);
     return ret;
 }
-int openssl_evp_ecdsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
-                             unsigned char *result, size_t result_len,
+int openssl_evp_ecdsa_verify(const unsigned char *sign_rom, size_t sign_rom_len,
+                             const unsigned char *result, size_t result_len,
+                             SCHEME_TYPE sch,
                              const unsigned char *pub_pem_file)
 {
     int ret = 0;
@@ -429,7 +452,8 @@ int openssl_evp_ecdsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
     EC_KEY *ec_key = NULL;
     BIO *bp = NULL;
     EVP_PKEY_CTX *ctx = NULL;
-
+    uint8_t hash[64];
+    size_t hash_len = 0;
     /*Check the user input.*/
     if (sign_rom == NULL || sign_rom_len == 0 || result == NULL || result_len == 0) {
         printf("input parameters error, content or len is NULL or 0.\n");
@@ -469,7 +493,18 @@ int openssl_evp_ecdsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
         printf("open_public_key failed to PEM_read_bio_RSAPublicKey Failed, ret=%d\n", ret);
         goto finish;
     }
-    EVP_PKEY_assign_EC_KEY(public_evp_key, ec_key);
+    ret = EVP_PKEY_set1_EC_KEY(public_evp_key, ec_key);
+    if (ret != 1) {
+        ret = -1;
+        printf("EVP_PKEY_set1_EC_KEY failed\n");
+        goto finish;
+    }
+    ret = EVP_PKEY_set_alias_type(public_evp_key, EVP_PKEY_EC);
+    if (ret != 1) {
+        printf("EVP_PKEY_set_alias_type to EVP_PKEY_EC failed! ret = %d\n", ret);
+        ret = -1;
+        goto finish;
+    }
     /*do verify*/
     ctx = EVP_PKEY_CTX_new(public_evp_key, NULL);
     if (ctx == NULL) {
@@ -477,12 +512,18 @@ int openssl_evp_ecdsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
         ret = -1;
         goto finish;
     }
+    hash_len = result_len;
+    ret = openssl_evp_md_type(result, &hash_len, hash, get_evp_scheme(sch));
+    if (ret != 0) {
+        printf("md failed\n");
+        goto finish;
+    }
     ret = EVP_PKEY_verify_init(ctx);
     if (ret != 1) {
         printf("EVP_PKEY_VerifyInit_ex failed, ret = %d\n", ret);
         goto finish;
     }
-    ret = EVP_PKEY_verify(ctx, sign_rom, (unsigned int)sign_rom_len, NULL, 0);
+    ret = EVP_PKEY_verify(ctx, sign_rom, sign_rom_len, hash, hash_len);
     if (ret != 1) {
         printf("EVP_VerifyFinal failed, ret = %d\n", ret);
         goto finish;

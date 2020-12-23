@@ -45,5 +45,6 @@ int main(void)
 //    printf("--------------------------\nmain: test_mbedtls_md5...\n--------------------------\n");
 //    test_mbedtls_md5();
 //    test_mbedtls_rsa_encrypt_decrypt();
-    mbedtls_test_ecc_sign_verfiy();
+    //mbedtls_test_ecc_sign_verfiy();
+    test_evp_ecc_signature_verify();
 }

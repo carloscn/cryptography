@@ -9,25 +9,7 @@
 
 static const char rnd_seed[] = "string to make the random number generator initialized";
 
-static EVP_MD* get_evp_scheme(RSA_SCHEME_TYPE sch)
-{
-    switch (sch) {
-        case RSA_MD5:
-            return EVP_md5();
-        case RSA_SHA1:
-            return EVP_sha1();
-        case RSA_SHA224:
-            return EVP_sha224();
-        case RSA_SHA256:
-            return EVP_sha256();
-        case RSA_SHA384:
-            return EVP_sha384();
-        case RSA_SHA512:
-            return EVP_sha512();
-        default:
-            return NULL;
-    }
-}
+
 /*
  * Gen RSA_F4 pkcs1 pem files.
  * */
@@ -801,7 +783,7 @@ int openssl_evp_pkcs8_rsa_decrypt(unsigned char *cipher_text, size_t cipher_len,
 // RSA_PKCS1_PADDING  RSA_OAEP_PADDING
 int openssl_evp_pkcs1_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
                                     unsigned char *result, size_t *result_len,
-                                    RSA_SCHEME_TYPE type,
+                                    SCHEME_TYPE type,
                                     const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = ERROR_NONE;
@@ -887,7 +869,7 @@ int openssl_evp_pkcs1_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len
 
 int openssl_evp_pkcs1_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
                                  unsigned char *result, size_t result_len,
-                                 RSA_SCHEME_TYPE type,
+                                 SCHEME_TYPE type,
                                  const unsigned char *pub_pem_file)
 {
     int ret = ERROR_NONE;
@@ -972,7 +954,7 @@ int openssl_evp_pkcs1_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
 
 int openssl_evp_pkcs8_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len,
                                     unsigned char *result, size_t *result_len,
-                                    RSA_SCHEME_TYPE type,
+                                    SCHEME_TYPE type,
                                     const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = ERROR_NONE;
@@ -1058,7 +1040,7 @@ int openssl_evp_pkcs8_rsa_signature(unsigned char *sign_rom, size_t sign_rom_len
 
 int openssl_evp_pkcs8_rsa_verify(unsigned char *sign_rom, size_t sign_rom_len,
                                  unsigned char *result, size_t result_len,
-                                 RSA_SCHEME_TYPE type,
+                                 SCHEME_TYPE type,
                                  const unsigned char *pub_pem_file)
 {
     int ret = ERROR_NONE;
