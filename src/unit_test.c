@@ -709,3 +709,20 @@ int test_evp_ecdsa_signature_verify()
         printf("openssl ecdsa verify succeed!\n");
     }
 }
+
+int test_mbedtls_random()
+{
+    uint8_t buffer[9552];
+    int ret = 0;
+
+    ret = mbedtls_random_request(buffer, sizeof(buffer));
+    if (ret != 0) {
+        printf("mbedtls test random failed\n");
+    } else {
+        printf("mbedtls test random succuss\n");
+        return ret;
+    }
+
+    return ret;
+
+}

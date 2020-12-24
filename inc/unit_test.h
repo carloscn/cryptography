@@ -4,6 +4,7 @@
 
 #ifndef WARM_OPENSSL_TEST_CASE_H
 #define WARM_OPENSSL_TEST_CASE_H
+#include "mbedtls_random.h"
 #include "openssl_rsa.h"
 #include "openssl_sm2.h"
 #include "openssl_md_sha.h"
@@ -20,6 +21,7 @@
 #define PUBLIC_ECC_KEY_FILE "eccpubkey.pem"
 
 int openssl_md5_test_out(unsigned char *content, uint64_t len, unsigned char *out);
+int test_mbedtls_random();
 int test_evp_sm2_signature_verify();
 int test_evp_pkcs1_rsa_signature_verify();
 int test_evp_pkcs8_rsa_signature_verify();

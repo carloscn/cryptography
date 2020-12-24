@@ -48,5 +48,6 @@ int main(void)
     //mbedtls_test_ecc_sign_verfiy();
 //    test_evp_ecc_signature_verify();
 //    mbedtls_test_ecdsa_sign_verfiy();
-    test_evp_ecdsa_signature_verify();
+//    test_evp_ecdsa_signature_verify();
+    test_mbedtls_random();
 }

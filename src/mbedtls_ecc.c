@@ -681,6 +681,7 @@ int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
     mbedtls_pk_free(&pk);
     mbedtls_ctr_drbg_free(&ctr_drbg);
     mbedtls_entropy_free(&entropy);
+    mbedtls_ecdsa_free(&ctx);
     if (fp != NULL)
         fclose(fp);
     return ret;
