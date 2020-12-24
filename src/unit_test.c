@@ -563,7 +563,7 @@ int mbedtls_test_ecc_sign_verfiy()
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
 
-    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA512, PRIVATE_ECC_KEY_FILE, NULL);
+    ret = mbedtls_pk_ecc_signature(plain_in, in_len, sign_out, &out_len, M_SHA512, PRIVATE_ECC_KEY_FILE, NULL);
     if (ret != 0) {
         printf("mbedtls ecc signature failed!\n");
         return ret;
@@ -574,7 +574,7 @@ int mbedtls_test_ecc_sign_verfiy()
     }
     printf("\n");
 
-    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, M_SHA512, PUBLIC_ECC_KEY_FILE);
+    ret = mbedtls_pk_ecc_verified(sign_out, out_len, plain_in, in_len, M_SHA512, PUBLIC_ECC_KEY_FILE);
     if (ret != 0) {
         printf("mbedtls ecc verify failed!\n");
     } else {
@@ -616,8 +616,8 @@ int test_evp_ecc_signature_verify()
     unsigned char plain_in[] = "hello carlos.";
     size_t out_len = 256;
     size_t in_len = strlen(plain_in);
-    ret = openssl_evp_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
-                                      PRIVATE_ECC_KEY_FILE, NULL);
+    ret = openssl_evp_pk_ecc_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
+                                       PRIVATE_ECC_KEY_FILE, NULL);
     if (ret != 0) {
         printf("oepnssl ecc signature failed!\n");
         return ret;
@@ -627,8 +627,8 @@ int test_evp_ecc_signature_verify()
         printf("%02X", sign_out[i]);
     }
     printf("\n");
-    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
-                                      PRIVATE_ECC_KEY_FILE, NULL);
+    ret = mbedtls_pk_ecc_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
+                                   PRIVATE_ECC_KEY_FILE, NULL);
     if (ret != 0) {
         printf("ecc signature failed!\n");
         return ret;
@@ -639,18 +639,73 @@ int test_evp_ecc_signature_verify()
     }
     printf("\n");
 
-    ret = openssl_evp_ecdsa_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
-                                       PUBLIC_ECC_KEY_FILE);
+    ret = openssl_evp_pk_ecc_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
+                                    PUBLIC_ECC_KEY_FILE);
     if (ret != 0) {
         printf("openssl ecc verify failed!\n");
     } else {
         printf("openssl ecc verify succeed!\n");
     }
-    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, M_SHA256,
-                                       PUBLIC_ECC_KEY_FILE);
+    ret = mbedtls_pk_ecc_verified(sign_out, out_len, plain_in, in_len, M_SHA256,
+                                  PUBLIC_ECC_KEY_FILE);
     if (ret != 0) {
         printf("mbedtls ecc verify failed!\n");
     } else {
         printf("mbedtls ecc verify succeed!\n");
+    }
+}
+
+int mbedtls_test_ecdsa_sign_verfiy()
+{
+    int ret = 0, i = 0;
+    unsigned char sign_out[1024];
+    unsigned char plain_in[] = "hello carlos.";
+    size_t out_len = 256;
+    size_t in_len = strlen(plain_in);
+
+    ret = mbedtls_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA512, PRIVATE_ECC_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("mbedtls ecdsa signature failed!\n");
+        return ret;
+    }
+    printf("ecdsa %s mbedtls sign len = %ld, signature result: \n", plain_in, out_len);
+    for(i = 0; i < out_len; i++) {
+        printf("%02X", sign_out[i]);
+    }
+    printf("\n");
+
+    ret = mbedtls_ecdsa_verified(sign_out, out_len, plain_in, in_len, M_SHA512, PUBLIC_ECC_KEY_FILE);
+    if (ret != 0) {
+        printf("mbedtls ecdsa verify failed!\n");
+    } else {
+        printf("mbedtls ecdsa verify succeed!\n");
+    }
+}
+
+int test_evp_ecdsa_signature_verify()
+{
+    int ret = 0, i = 0;
+    unsigned char sign_out[1024];
+    unsigned char plain_in[] = "hello carlos.";
+    size_t out_len = 256;
+    size_t in_len = strlen(plain_in);
+    ret = openssl_evp_ecdsa_signature(plain_in, in_len, sign_out, &out_len, M_SHA256,
+                                       PRIVATE_ECC_KEY_FILE, NULL);
+    if (ret != 0) {
+        printf("oepnssl ecdsa signature failed!\n");
+        return ret;
+    }
+    printf("openssl ecdsa %s sign len = %ld, signature result: \n", plain_in, out_len);
+    for(i = 0; i < out_len; i++) {
+        printf("%02X", sign_out[i]);
+    }
+    printf("\n");
+
+    ret = openssl_evp_ecdsa_verify(sign_out, out_len, plain_in, in_len, M_SHA256,
+                                    PUBLIC_ECC_KEY_FILE);
+    if (ret != 0) {
+        printf("openssl ecdsa verify failed!\n");
+    } else {
+        printf("openssl ecdsa verify succeed!\n");
     }
 }

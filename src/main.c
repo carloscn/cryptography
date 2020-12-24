@@ -46,5 +46,7 @@ int main(void)
 //    test_mbedtls_md5();
 //    test_mbedtls_rsa_encrypt_decrypt();
     //mbedtls_test_ecc_sign_verfiy();
-    test_evp_ecc_signature_verify();
+//    test_evp_ecc_signature_verify();
+//    mbedtls_test_ecdsa_sign_verfiy();
+    test_evp_ecdsa_signature_verify();
 }

@@ -17,13 +17,20 @@ int mbedtls_ecc_encrypt(const unsigned char *plain_text, size_t plain_len,
 int mbedtls_ecc_decryt(const unsigned char *cipher_text, size_t cipher_len,
                        unsigned char **plain_text, size_t *plain_len,
                        const unsigned char *pem_file, const unsigned char *passwd);
-int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
-                            unsigned char *result, size_t *result_len,
+int mbedtls_pk_ecc_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                             unsigned char *result, size_t *result_len,
+                             SCHEME_TYPE sch,
+                             const unsigned char *pem_file, const unsigned char *passwd);
+int mbedtls_pk_ecc_verified(const unsigned char *sign_rom, size_t sign_rom_len,
+                            const unsigned char *result, size_t result_len,
                             SCHEME_TYPE sch,
-                            const unsigned char *priv_pem_file, const unsigned char *passwd);
+                            const unsigned char *pub_pem_file);
 int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
                            const unsigned char *result, size_t result_len,
                            SCHEME_TYPE sch,
                            const unsigned char *pub_pem_file);
-
+int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                            unsigned char *result, size_t *result_len,
+                            SCHEME_TYPE sch,
+                            const unsigned char *pem_file, const unsigned char *passwd);
 #endif //CARLOS_OPENMBED_MBEDTLS_ECC_H

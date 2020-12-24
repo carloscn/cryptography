@@ -36,4 +36,6 @@ int mbedtls_test_ecc_sign_verfiy();
 int mbedtls_test_rsa_sign_verify();
 int test_mbedtls_ecc_encrypt_decrypt();
 int test_evp_ecc_signature_verify();
+int mbedtls_test_ecdsa_sign_verfiy();
+int test_evp_ecdsa_signature_verify();
 #endif //WARM_OPENSSL_TEST_CASE_H

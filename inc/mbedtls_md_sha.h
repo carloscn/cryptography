@@ -21,5 +21,5 @@
 
 
 int mbedtls_user_md_str(unsigned char *content, uint64_t len, unsigned char *out, const unsigned char* type);
-int mbedtls_user_md_type(unsigned char *content, uint64_t len, unsigned char *out, mbedtls_md_type_t type);
+int mbedtls_user_md_type(unsigned char *content, size_t *len, unsigned char *out, mbedtls_md_type_t type);
 #endif //WARM_OPENSSL_MBEDTLS_MD_SHA_H

@@ -295,10 +295,10 @@ int mbedtls_ecc_decryt(const unsigned char *cipher_text, size_t cipher_len,
     return ret;
 }
 
-int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
-                            unsigned char *result, size_t *result_len,
-                            SCHEME_TYPE sch,
-                            const unsigned char *pem_file, const unsigned char *passwd)
+int mbedtls_pk_ecc_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                             unsigned char *result, size_t *result_len,
+                             SCHEME_TYPE sch,
+                             const unsigned char *pem_file, const unsigned char *passwd)
 {
     int ret = ERROR_NONE;
     int rc = MBEDTLS_EXIT_SUCCESS;
@@ -312,6 +312,7 @@ int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
     unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
     const char *pers = "mbedtls_ecc_signature";
     size_t outlen = 0;
+    size_t hash_len = 0;
 
     /* 1. check input condition. */
     if (sign_rom == NULL || result == NULL || sign_rom_len == 0) {
@@ -358,14 +359,15 @@ int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
     /* 2.3 sign data */
     /* For RSA, md_alg may be MBEDTLS_MD_NONE if hash_len != 0. For ECDSA, md_alg may never be MBEDTLS_MD_NONE. */
     /* 2.3.1 ecc need select hash padding, calculate hash. */
-    rc = mbedtls_user_md_type((unsigned char *)sign_rom, sign_rom_len, hash, get_mbedtls_scheme(sch));
+    hash_len = sign_rom_len;
+    rc = mbedtls_user_md_type((unsigned char *)sign_rom, &hash_len, hash, get_mbedtls_scheme(sch));
     if (rc != 0) {
         mbedtls_printf(" failed!\n  hash: md_setup. returned :0x%4X\n", rc);
         ret = -ERROR_CRYPTO_SIGN_FAILED;
         goto finish;
     }
     /* 2.3.2 gen ecdsaa handler */
-    rc = mbedtls_pk_sign(&pk, MBEDTLS_MD_MD5, hash, sizeof(hash),
+    rc = mbedtls_pk_sign(&pk, get_mbedtls_scheme(sch), hash, hash_len,
                          buf, &outlen, mbedtls_ctr_drbg_random, &ctr_drbg);
     if (rc != 0) {
         mbedtls_printf( " failed\n  ! mbedtls_ecc_sign returned -0x%04x\n", -rc );
@@ -386,10 +388,10 @@ int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
     return ret;
 }
 
-int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
-                           const unsigned char *result, size_t result_len,
-                           SCHEME_TYPE sch,
-                           const unsigned char *pub_pem_file)
+int mbedtls_pk_ecc_verified(const unsigned char *sign_rom, size_t sign_rom_len,
+                            const unsigned char *result, size_t result_len,
+                            SCHEME_TYPE sch,
+                            const unsigned char *pub_pem_file)
 {
     int ret = ERROR_NONE;
     int rc = MBEDTLS_EXIT_SUCCESS;
@@ -397,10 +399,10 @@ int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
     mbedtls_pk_context pk;
     mbedtls_ctr_drbg_context ctr_drbg;
     mbedtls_entropy_context entropy;
-    mbedtls_rsa_context *rsa = NULL;
     unsigned char hash[MBEDTLS_MD_MAX_SIZE];
     unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
     const char *pers = "mbedtls_ecc_verify";
+    size_t hash_len = 0;
 
     /* 1. check input condition. */
     if (sign_rom == NULL || sign_rom_len == 0 || result == NULL) {
@@ -447,14 +449,15 @@ int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
     memset(buf, 0, sizeof(buf));
     /* 2.3 encrypt data */
     /* 2.3.1 caculate hash */
-    rc = mbedtls_user_md_type(result, result_len, hash, get_mbedtls_scheme(sch));
+    hash_len = result_len;
+    rc = mbedtls_user_md_type(result, &hash_len, hash, get_mbedtls_scheme(sch));
     if (rc != 0) {
         mbedtls_printf("caculate hash failed, ret = 0x%4x\n", rc);
         ret = -ERROR_CRYPTO_SIGN_FAILED;
         goto finish;
     }
     rc = mbedtls_pk_verify(&pk, MBEDTLS_MD_MD5,
-                           hash, sizeof(hash),
+                           hash, hash_len,
                            sign_rom, sign_rom_len);
     if (rc != 0) {
         printf( " failed\n  ! mbedtls_ecc_verify returned -0x%04x\n", -rc );
@@ -463,8 +466,218 @@ int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
     }
     ret = ERROR_NONE;
     finish:
-    if (rsa != NULL)
-        mbedtls_rsa_free(rsa);
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+/*This function using the mbedtls_ecdsa interface*/
+
+int mbedtls_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                             unsigned char *result, size_t *result_len,
+                             SCHEME_TYPE sch,
+                             const unsigned char *pem_file, const unsigned char *passwd)
+{
+    int ret = ERROR_NONE;
+    int rc = MBEDTLS_EXIT_SUCCESS;
+    FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    mbedtls_ecdsa_context ctx;
+    mbedtls_ecp_keypair *ec_key = NULL;
+    unsigned char hash[MBEDTLS_MD_MAX_SIZE];
+    size_t hash_len = 0;
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_ecdsa_verify";
+    size_t outlen = 0;
+
+    /* 1. check input condition. */
+    if (sign_rom == NULL || result == NULL || sign_rom_len == 0) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    if (NULL == pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fp = fopen((const char*)pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+    /* 2. using the mbedtls interface to sign msg. */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    mbedtls_ecdsa_init(&ctx);
+    rc = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                &entropy, (const unsigned char *) pers,
+                                strlen(pers));
+    if (rc != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -rc );
+        ret = -ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    /* 2.2 read the private key */
+    mbedtls_pk_init(&pk);
+    rc = mbedtls_pk_parse_keyfile(&pk, pem_file, passwd);
+    if (rc != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_pk_parse_keyfile returned -0x%04x\n", -rc );
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ec_key = mbedtls_pk_ec(pk);
+    if (ec_key == NULL) {
+        mbedtls_printf(" failed\n  ! mbedtls pk convert to ec failed\n");
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    rc = mbedtls_ecdsa_from_keypair(&ctx, ec_key);
+    if (rc != 0) {
+        mbedtls_printf("  failed\n, mbedtls)ecdsa_from_keypair failed! ret = %d\n", rc);
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, sizeof(buf));
+    /* 2.3 sign data */
+    /* For RSA, md_alg may be MBEDTLS_MD_NONE if hash_len != 0. For ECDSA, md_alg may never be MBEDTLS_MD_NONE. */
+    /* 2.3.1 ecc need select hash padding, calculate hash. */
+    hash_len = sign_rom_len;
+    rc = mbedtls_user_md_type((unsigned char *)sign_rom, &hash_len, hash, get_mbedtls_scheme(sch));
+    if (rc != 0) {
+        mbedtls_printf(" failed!\n  hash: md_setup. returned :0x%4X\n", rc);
+        ret = -ERROR_CRYPTO_SIGN_FAILED;
+        goto finish;
+    }
+    /* 2.3.2 gen ecdsaa handler */
+    rc = mbedtls_ecdsa_write_signature(&ctx, get_mbedtls_scheme(sch),
+                                       hash, hash_len,
+                                       buf, &outlen, mbedtls_ctr_drbg_random,
+                                       &ctr_drbg);
+    if (rc != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ecdsa_sign returned -0x%04x\n", -rc );
+        ret = -ERROR_CRYPTO_SIGN_FAILED;
+        goto finish;
+    }
+    /* 2.4 mv data to result text */
+    *result_len = outlen;
+    memcpy(result, buf, *result_len);
+    ret = ERROR_NONE;
+
+    finish:
+    mbedtls_pk_free(&pk);
+    mbedtls_ctr_drbg_free(&ctr_drbg);
+    mbedtls_ecdsa_free(&ctx);
+    mbedtls_entropy_free(&entropy);
+    if (fp != NULL)
+        fclose(fp);
+    return ret;
+}
+
+int mbedtls_ecdsa_verified(const unsigned char *sign_rom, size_t sign_rom_len,
+                           const unsigned char *result, size_t result_len,
+                           SCHEME_TYPE sch,
+                           const unsigned char *pub_pem_file)
+{
+    int ret = ERROR_NONE;
+    int rc = MBEDTLS_EXIT_SUCCESS;
+    FILE *fp = NULL;
+    mbedtls_pk_context pk;
+    mbedtls_ctr_drbg_context ctr_drbg;
+    mbedtls_entropy_context entropy;
+    unsigned char hash[MBEDTLS_MD_MAX_SIZE];
+    unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    const char *pers = "mbedtls_ecc_verify";
+    size_t hash_len = 0;
+    mbedtls_ecdsa_context ctx;
+    mbedtls_ecp_keypair *key = NULL;
+
+    /* 1. check input condition. */
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL) {
+        printf("input parameters error, input is NULL or 0.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    if (NULL == pub_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fp = fopen((const char*)pub_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+
+    /* 2. using the mbedtls interface to verify msg. */
+    /* 2.1 init random */
+    mbedtls_ctr_drbg_init(&ctr_drbg);
+    mbedtls_entropy_init(&entropy);
+    mbedtls_ecdsa_init(&ctx);
+    rc = mbedtls_ctr_drbg_seed( &ctr_drbg, mbedtls_entropy_func,
+                                &entropy, (const unsigned char *) pers,
+                                strlen(pers));
+    if (rc != 0) {
+        mbedtls_printf( " failed\n  ! mbedtls_ctr_drbg_seed returned -0x%04x\n",
+                        (unsigned int) -rc );
+        ret = -ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    /* 2.2 read the public key */
+    mbedtls_pk_init(&pk);
+    rc = mbedtls_pk_parse_public_keyfile(&pk, pub_pem_file);
+    if (rc != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -rc );
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    key = mbedtls_pk_ec(pk);
+    if (key == NULL) {
+       mbedtls_printf("failed!\n mbedtls_pk_ec failed\n");
+       ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+       goto finish;
+    }
+    rc = mbedtls_ecdsa_from_keypair(&ctx, key);
+    if (rc != 0) {
+        mbedtls_printf("failed\n mbedtls_ecdsa_from_keypair failed\n");
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    fflush(stdout);
+    memset(buf, 0, sizeof(buf));
+    /* 2.3 encrypt data */
+    /* 2.3.1 caculate hash */
+    hash_len = result_len;
+    rc = mbedtls_user_md_type(result, &hash_len, hash, get_mbedtls_scheme(sch));
+    if (rc != 0) {
+        mbedtls_printf("caculate hash failed, ret = 0x%4x\n", rc);
+        ret = -ERROR_CRYPTO_SIGN_FAILED;
+        goto finish;
+    }
+    rc = mbedtls_ecdsa_read_signature(&ctx,
+                                      hash, hash_len,
+                                      sign_rom, sign_rom_len);
+    if (rc != 0) {
+        printf( " failed\n  ! mbedtls_ecc_verify returned -0x%04x\n", -rc );
+        ret = -ERROR_CRYPTO_VERIFY_FAILED;
+        goto finish;
+    }
+    ret = ERROR_NONE;
+    finish:
     mbedtls_pk_free(&pk);
     mbedtls_ctr_drbg_free(&ctr_drbg);
     mbedtls_entropy_free(&entropy);

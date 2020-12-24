@@ -333,10 +333,10 @@ int openssl_evp_ecc_decryt(const unsigned char *cipher_text, size_t cipher_len,
     return ret;
 }
 
-int openssl_evp_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
-                                unsigned char *result, size_t *result_len,
-                                SCHEME_TYPE sch,
-                                const unsigned char *priv_pem_file, const unsigned char *passwd)
+int openssl_evp_pk_ecc_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                                 unsigned char *result, size_t *result_len,
+                                 SCHEME_TYPE sch,
+                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
 {
     int ret = OPSSL_FAIL;
     FILE *fp = NULL;
@@ -441,10 +441,10 @@ int openssl_evp_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_l
          EC_KEY_free(pri_ec_key);
     return ret;
 }
-int openssl_evp_ecdsa_verify(const unsigned char *sign_rom, size_t sign_rom_len,
-                             const unsigned char *result, size_t result_len,
-                             SCHEME_TYPE sch,
-                             const unsigned char *pub_pem_file)
+int openssl_evp_pk_ecc_verify(const unsigned char *sign_rom, size_t sign_rom_len,
+                              const unsigned char *result, size_t result_len,
+                              SCHEME_TYPE sch,
+                              const unsigned char *pub_pem_file)
 {
     int ret = 0;
     FILE *fp = NULL;
@@ -539,5 +539,156 @@ int openssl_evp_ecdsa_verify(const unsigned char *sign_rom, size_t sign_rom_len,
     if (ec_key != NULL)
         EC_KEY_free(ec_key);
 
+    return ret;
+}
+
+int openssl_evp_ecdsa_signature(const unsigned char *sign_rom, size_t sign_rom_len,
+                                 unsigned char *result, size_t *result_len,
+                                 SCHEME_TYPE sch,
+                                 const unsigned char *priv_pem_file, const unsigned char *passwd)
+{
+    int ret = ERROR_NONE;
+    int rc = OPSSL_OK;
+    FILE *fp = NULL;
+    BIO *bio = NULL;
+    EC_KEY *pri_ec_key = NULL;
+    uint8_t hash[64] = {0};
+    size_t hash_len = 0;
+    /*Check the user input.*/
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL) {
+        printf("input parameters error, content or len is NULL or 0.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    if (NULL == priv_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        return ret;
+    }
+    fp = fopen((const char*)priv_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+    /*read private key from pem file to private_evp_key*/
+    //OpenSSL_add_all_algorithms();
+
+    bio = BIO_new(BIO_s_file());
+    if (bio == NULL) {
+        printf("BIO_new is failed.\n");
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ret = BIO_read_filename(bio, priv_pem_file);
+    if (ret != OPSSL_OK) {
+        printf("BIO read file %s failed\n", priv_pem_file);
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    pri_ec_key = PEM_read_bio_ECPrivateKey(bio, &pri_ec_key, (void*)passwd, NULL);
+    if (pri_ec_key == NULL) {
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        printf("open_private_key failed to PEM_read_bio_RSAPrivateKey Failed, ret=%d\n", ret);
+        goto finish;
+    }
+    fflush(stdout);
+    hash_len = sign_rom_len;
+    ret = openssl_evp_md_type(sign_rom, &hash_len, hash, get_evp_scheme(sch));
+    if (ret != ERROR_NONE) {
+        printf("md type failed");
+        goto finish;
+    }
+    /* the type is ingored */
+    rc = ECDSA_sign(0, hash, hash_len, result, result_len, pri_ec_key);
+    if (rc != OPSSL_OK) {
+        printf("EVP_SignUpdate failed, ret = %d\n", ret);
+        ret = -ERROR_CRYPTO_SIGN_FAILED;
+        goto finish;
+    }
+    ret = ERROR_NONE;
+    finish:
+    if (pri_ec_key != NULL)
+        EC_KEY_free(pri_ec_key);
+    if (bio != NULL)
+        BIO_free_all(bio);
+    return ret;
+}
+
+int openssl_evp_ecdsa_verify(const unsigned char *sign_rom, size_t sign_rom_len,
+                              const unsigned char *result, size_t result_len,
+                              SCHEME_TYPE sch,
+                              const unsigned char *pub_pem_file)
+{
+    /* deal project error code. */
+    int ret = ERROR_NONE;
+    /* deal openssl official interface return */
+    int rc = OPSSL_OK;
+    FILE *fp = NULL;
+    EC_KEY *ec_key = NULL;
+    BIO *bp = NULL;
+    uint8_t hash[64];
+    size_t hash_len = 0;
+
+    /*Check the user input.*/
+    if (sign_rom == NULL || sign_rom_len == 0 || result == NULL || result_len == 0) {
+        printf("input parameters error, content or len is NULL or 0.\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    if (NULL == pub_pem_file) {
+        printf("input pem_file name is invalid\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fp = fopen((const char*)pub_pem_file, "r");
+    if (NULL == fp) {
+        printf("input pem_file is not exit.\n ");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    fclose(fp);
+    fp = NULL;
+    /*read public key from pem file to private_evp_key*/
+    //OpenSSL_add_all_algorithms();
+    bp = BIO_new(BIO_s_file());
+    if (bp == NULL) {
+        printf("BIO_new is failed.\n");
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ret = BIO_read_filename(bp, pub_pem_file);
+    if (ret != OPSSL_OK) {
+        printf("BIO read file %s failed\n", pub_pem_file);
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ec_key = PEM_read_bio_EC_PUBKEY(bp, &ec_key, NULL, NULL);
+    if (ec_key == NULL) {
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        printf("open_public_key failed to PEM_read_ECPUBKEY Failed, ret=%d\n", ret);
+        goto finish;
+    }
+    fflush(stdout);
+    hash_len = result_len;
+    ret = openssl_evp_md_type(result, &hash_len, hash, get_evp_scheme(sch));
+    if (ret != ERROR_NONE) {
+        printf("md failed\n");
+        goto finish;
+    }
+    rc = ECDSA_verify(0, hash, hash_len, sign_rom, sign_rom_len, ec_key);
+    if (rc != OPSSL_OK) {
+        printf("EVP_VerifyFinal failed, ret = %d\n", rc);
+        ret = -ERROR_CRYPTO_VERIFY_FAILED;
+        goto finish;
+    }
+    ret = ERROR_NONE;
+    finish:
+    if (ec_key != NULL)
+        EC_KEY_free(ec_key);
+    if (bp != NULL)
+        BIO_free_all(bp);
     return ret;
 }

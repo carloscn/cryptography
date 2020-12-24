@@ -58,7 +58,7 @@ int mbedtls_user_md_str(unsigned char *content, uint64_t len, unsigned char *out
     return ret;
 }
 
-int mbedtls_user_md_type(unsigned char *content, uint64_t len, unsigned char *out, mbedtls_md_type_t type)
+int mbedtls_user_md_type(unsigned char *content, size_t *len, unsigned char *out, mbedtls_md_type_t type)
 {
     int ret = -2;
     mbedtls_md_context_t md_ctx;
@@ -91,7 +91,7 @@ int mbedtls_user_md_type(unsigned char *content, uint64_t len, unsigned char *ou
         goto finish;
     }
     // ->|start finish.|<-
-    ret = mbedtls_md_update(&md_ctx, content, len);
+    ret = mbedtls_md_update(&md_ctx, content, *len);
     if (ret != 0) {
         mbedtls_printf("mbedtls_md_update() failed, ret = %d \n", ret);
         goto finish;
@@ -103,6 +103,7 @@ int mbedtls_user_md_type(unsigned char *content, uint64_t len, unsigned char *ou
         goto finish;
     }
     // ->|finish finish.|<-
+    *len = (size_t)mbedtls_md_get_size(mbedtls_md_info_from_type(type));
     finish:
     mbedtls_md_free(&md_ctx);
     return ret;
