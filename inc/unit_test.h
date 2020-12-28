@@ -4,6 +4,14 @@
 
 #ifndef WARM_OPENSSL_TEST_CASE_H
 #define WARM_OPENSSL_TEST_CASE_H
+#include <stdlib.h>
+#include <stdio.h>
+#ifdef _WIN32 or _WIN64
+#include <windows.h>
+#endif
+#ifdef __unix
+#include <unistd.h>
+#endif
 #include "mbedtls_random.h"
 #include "openssl_rsa.h"
 #include "openssl_sm2.h"
@@ -12,6 +20,8 @@
 #include "mbedtls_md_sha.h"
 #include "mbedtls_rsa.h"
 #include "mbedtls_ecc.h"
+#include "utils_net_client.h"
+#include "utils_net_sever.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
@@ -40,4 +50,6 @@ int test_mbedtls_ecc_encrypt_decrypt();
 int test_evp_ecc_signature_verify();
 int mbedtls_test_ecdsa_sign_verfiy();
 int test_evp_ecdsa_signature_verify();
+int test_tcp_server();
+int test_tcp_client();
 #endif //WARM_OPENSSL_TEST_CASE_H

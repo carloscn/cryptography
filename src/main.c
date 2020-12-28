@@ -49,5 +49,7 @@ int main(void)
 //    test_evp_ecc_signature_verify();
 //    mbedtls_test_ecdsa_sign_verfiy();
 //    test_evp_ecdsa_signature_verify();
-    test_mbedtls_random();
+//    test_mbedtls_random();
+//    test_tcp_server();
+    test_tcp_client();
 }

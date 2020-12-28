@@ -726,3 +726,63 @@ int test_mbedtls_random()
     return ret;
 
 }
+
+int test_tcp_server()
+{
+    int ret = 0;
+    const char *server_ip = "192.168.3.79";
+    const char *port = "5555";
+    char client_ip[255];
+    char buffer[4096];
+    char *buf = NULL;
+    size_t recv_len = 0;
+    ret = utils_net_server_init(server_ip, port, MBEDTLS_NET_PROTO_TCP);
+    if (ret != ERROR_NONE) {
+        printf("init error\n");
+        goto finish;
+    }
+    ret = utils_net_server_accept(client_ip, 4096, (char *)buffer);
+    if (ret != ERROR_NONE) {
+        printf("server accept failed\n");
+        goto finish;
+    }
+    printf("server accept %s \n", client_ip);
+    while(true) {
+        utils_net_server_send("nihao", 5);
+        sleep(2);
+        recv_len = utils_net_server_recv(buffer, 4096);
+        if (recv_len > 0) {
+            printf("recv : %s\n", buffer);
+        }
+    }
+    finish:
+    utils_net_server_free();
+    return ret;
+}
+
+int test_tcp_client()
+{
+    int ret = 0;
+    const char *server_ip = "192.168.3.79";
+    const char *client_ip = "192.168.3.7";
+    const char *port = "5555";
+    char buffer[4096];
+    char *buf = NULL;
+    int recv_len = 0;
+    ret = utils_net_client_init(client_ip, port, MBEDTLS_NET_PROTO_TCP);
+    if (ret != ERROR_NONE) {
+        printf("init error\n");
+        goto finish;
+    }
+    while(true) {
+        utils_net_client_send("nihao", 5);
+        sleep(2);
+        recv_len = utils_net_client_recv(buffer, 4096);
+        if (recv_len > 0) {
+            printf("recv : %s len = %d\n", buffer, recv_len);
+        }
+    }
+    finish:
+    utils_net_server_free();
+    return ret;
+}
