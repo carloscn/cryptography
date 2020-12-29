@@ -23,6 +23,9 @@
 #include "utils_net_client.h"
 #include "utils_net_sever.h"
 #include "mbedtls_gen_dh.h"
+#include "mbedtls_dh_server.h"
+#include "mbedtls_dh_client.h"
+
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
 #define PRIVATE_RSA_KEY_FILE "rsaprikey.pem"
@@ -54,5 +57,7 @@ int test_evp_ecdsa_signature_verify();
 int test_tcp_server();
 int test_tcp_client();
 int test_gen_dhm();
+int test_rsa_dh_client();
+int test_rsa_dh_server();
 
 #endif //WARM_OPENSSL_TEST_CASE_H

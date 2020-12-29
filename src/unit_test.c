@@ -812,7 +812,12 @@ int test_gen_dhm()
  * */
 int test_rsa_dh_server()
 {
-
+    int ret = 0;
+    ret = mbedtls_dh_server_entry();
+    if (ret != 0) {
+        printf("test failed for rsa dh server\n");
+        return ret;
+    }
 }
 
 /*
@@ -831,5 +836,10 @@ int test_rsa_dh_server()
  * */
 int test_rsa_dh_client()
 {
-
+    int ret = 0;
+    ret = mbedtls_dh_client_entry();
+    if (ret != 0) {
+        printf("test failed for rsa dh client\n");
+        return ret;
+    }
 }

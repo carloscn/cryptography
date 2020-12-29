@@ -12,4 +12,7 @@
 
 #define PRIVATE_RSA_KEY_FILE "rsaprikey.pem"
 #define DHM_PRIME_FILE "dhm.txt"
+
+int mbedtls_dh_server_entry();
+
 #endif //CARLOS_OPENMBED_MBEDTLS_DH_SERVER_H

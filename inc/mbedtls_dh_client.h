@@ -12,4 +12,7 @@
 
 #define PUBLIC_RSA_KEY_FILE "rsapubkey.pem"
 #define DHM_PRIME_FILE "dhm.txt"
+
+int mbedtls_dh_client_entry();
+
 #endif //CARLOS_OPENMBED_MBEDTLS_DH_CLIENT_H
