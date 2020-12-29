@@ -22,13 +22,14 @@
 #include "mbedtls_ecc.h"
 #include "utils_net_client.h"
 #include "utils_net_sever.h"
-
+#include "mbedtls_gen_dh.h"
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
 #define PRIVATE_RSA_KEY_FILE "rsaprikey.pem"
 #define PUBLIC_RSA_KEY_FILE "rsapubkey.pem"
 #define PRIVATE_ECC_KEY_FILE "eccprikey.pem"
 #define PUBLIC_ECC_KEY_FILE "eccpubkey.pem"
+#define DHM_PRIME_FILE "dhm.txt"
 
 int openssl_md5_test_out(unsigned char *content, uint64_t len, unsigned char *out);
 int test_mbedtls_random();
@@ -52,4 +53,6 @@ int mbedtls_test_ecdsa_sign_verfiy();
 int test_evp_ecdsa_signature_verify();
 int test_tcp_server();
 int test_tcp_client();
+int test_gen_dhm();
+
 #endif //WARM_OPENSSL_TEST_CASE_H

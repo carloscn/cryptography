@@ -786,3 +786,50 @@ int test_tcp_client()
     utils_net_server_free();
     return ret;
 }
+
+int test_gen_dhm()
+{
+    int ret = 0;
+    if ((ret = mbedtls_gen_dh_prime(DHM_PRIME_FILE, 2048)) != 0) {
+        printf("test : gen dh_prime failed returned %d\n", ret);
+        return ret;
+    }
+}
+
+/*
+ * Test for rsa hd server
+ * 1. init mbedtls, read (DHP) from dh_prime.txt.
+ * 2. init network as server.
+ * 3. Accept the client network.
+ * 4. Generate the server DH public key(SPUK) randomly.
+ *    and mod it to gen server DH private key (SPRK).
+ * 5. Using the RSA private key(1024) sign the SPUK.
+ * 6. Send SPUK + signed SPUK hash to client. (SHA256)
+ * 7. Recv client DH public key(CPUK)
+ * 8. Caculate: DHP + SPRK + CPUK = CSK
+ * 9. Using the CSK encrypt msg "hello world."
+ * 10. Send encrypted msg to Client.
+ * */
+int test_rsa_dh_server()
+{
+
+}
+
+/*
+ * Test for rsa hd client.
+ * 1. init mbedtls, read (DHP) from dh_prime.txt
+ * 2. init network as client.
+ * 3. Connect to server network.
+ * 4. Recv server's SPUK and signed SPUK hash. (SHA256)
+ * 5. Do SPUK hash, and using the public key to verify the SPUK. (RSA1024)
+ * 6. Generate the client DH public key(CPUK) randomly.
+ *    and mod it to gen client DH private key (CPRK)
+ * 7. Send CPUK to server.
+ * 8. Caculate: DHP + SPUK + CPRK = CSK.
+ * 9. Recv the server encrypted msg.
+ * 10. Decrypt the msg as "hello world."
+ * */
+int test_rsa_dh_client()
+{
+
+}

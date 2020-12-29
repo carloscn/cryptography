@@ -51,5 +51,6 @@ int main(void)
 //    test_evp_ecdsa_signature_verify();
 //    test_mbedtls_random();
 //    test_tcp_server();
-    test_tcp_client();
+//    test_tcp_client();
+        test_gen_dhm();
 }
