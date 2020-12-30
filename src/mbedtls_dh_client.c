@@ -31,17 +31,14 @@ int mbedtls_dh_client_entry()
     mbedtls_mpi G,P;
     size_t n, buflen;
     uint8_t *pers = "random";
-    uint8_t hash[64];
-    uint8_t *msg = "hello world!";
     FILE *f = NULL;
     uint8_t *ip = "192.168.3.79";
     uint8_t *port = "5556";
-    uint8_t client_ip[255];
     uint8_t buffer[4096] = {'\0'};
-    uint8_t signed_rom[1024];
     size_t signed_len = 0;
     int net_len = 0;
     uint8_t  *p = NULL, *end = NULL;
+    int sig_len = 0;
 
     mbedtls_dhm_init( &dhm );
     mbedtls_aes_init( &aes );
@@ -100,6 +97,7 @@ int mbedtls_dh_client_entry()
         ret = -ERROR_COMMON_BUFFER_INSUFFIENT;
         goto finish;
     }
+    mbedtls_printf("recv buffer len is %d\n", n);
     /* 3a.2 get SPUK from net server*/
     memset(buffer, '\0', sizeof(buffer));
     net_len = utils_net_client_recv(buffer, n);
@@ -112,7 +110,7 @@ int mbedtls_dh_client_entry()
     end = buffer + buflen;
     rc = mbedtls_dhm_read_params(&dhm, &p, end);
     if (rc != 0) {
-        mbedtls_printf( " failed\n  ! mbedtls_dhm_read_params returned %d\n\n", ret );
+        mbedtls_printf( " failed\n  ! mbedtls_dhm_read_params returned 0x%2X\n\n", rc );
         ret = -ERROR_CRYPTO_INIT_FAILED;
         goto finish;
     }
@@ -125,10 +123,20 @@ int mbedtls_dh_client_entry()
     mbedtls_printf( "\n  . Verifying the server's RSA signature" );
     fflush( stdout );
     p += 2;
-    ret = mbedtls_rsa_pkcs1_verified(p, 64,
-                                     buffer, (size_t)(p-2-buffer),
+    sig_len = mbedtls_get_pem_sig_len(PUBLIC_RSA_KEY_FILE, false, NULL);
+    if( ( n = (size_t) ( end - p ) ) != sig_len)
+    {
+        mbedtls_printf( " failed\n  ! Invalid RSA signature size, %ld != %d \n\n", n,  sig_len);
+        ret = -ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    mbedtls_printf( " \n RSA signature size, %ld == %d \n\n", n,  sig_len);
+    signed_len = (size_t)(p-2-buffer);
+    ret = mbedtls_rsa_pkcs1_verified(p, n,
+                                     buffer, signed_len,
                                      M_SHA256, PUBLIC_RSA_KEY_FILE);
     if (ret != 0) {
+        printf("RSA verified failed\n");
         goto finish;
     }
     /* 5. Send client public key CPUK to server */
@@ -160,12 +168,12 @@ int mbedtls_dh_client_entry()
         mbedtls_printf("%02x", buffer[n]);
     }
     /* 6. Decrypt msg using CSK*/
-    mbedtls_printf( "...\n  . Encrypting and sending the ciphertext" );
+    mbedtls_printf( "...\n  . Decrypting and recv the ciphertext" );
     fflush( stdout );
-    mbedtls_aes_setkey_enc(&aes, buffer, 256);
-    mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_ENCRYPT, msg, buffer);
+    mbedtls_aes_setkey_dec(&aes, buffer, 256);
     net_len = utils_net_client_recv(buffer, 16);
     if (net_len != 16) {
+        mbedtls_printf("recv failed!\n");
         goto finish;
     }
     mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_DECRYPT, buffer, buffer);

@@ -46,22 +46,20 @@ int utils_net_client_init(const char *bind_ip, const char *port, int proto)
 
 int utils_net_client_send(const unsigned char *buf, size_t len)
 {
-
-    int ret = ERROR_NONE;
     int rc = MBEDTLS_EXIT_SUCCESS;
     if (buf == NULL || len == 0) {
         mbedtls_printf("send error ,input buf or len is NULL or 0\n");
-        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        rc = -ERROR_COMMON_INPUT_PARAMETERS;
         goto finish;
     }
     rc  = mbedtls_net_send(&client_net_ctx, buf, len);
     if (rc < 0) {
-        mbedtls_printf("net send failed, ret = %d\n", ret);
-        ret = -ERROR_COMMON_NET_SEND_FAILED;
+        mbedtls_printf("net send failed, ret = %d\n", rc);
+        rc = -ERROR_COMMON_NET_SEND_FAILED;
         goto finish;
     }
     finish:
-    return ret;
+    return rc;
 }
 
 int utils_net_client_recv(unsigned char* buf, size_t max_len)
