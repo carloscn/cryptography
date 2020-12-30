@@ -18,7 +18,6 @@
  * 9. Using the CSK encrypt msg "hello world."
  * 10. Send encrypted msg to Client.
  * */
-
 int mbedtls_dh_server_entry()
 {
     int ret = ERROR_NONE;
@@ -38,9 +37,10 @@ int mbedtls_dh_server_entry()
     uint8_t *port = "5556";
     uint8_t client_ip[255];
     uint8_t buffer[4096] = {'\0'};
-    uint8_t signed_rom[1024];
     size_t signed_len = 0;
+    uint8_t buf2[2];
     int net_len = 0;
+    int sig_len = 0;
 
     mbedtls_dhm_init( &dhm );
     mbedtls_aes_init( &aes );
@@ -105,34 +105,47 @@ int mbedtls_dh_server_entry()
        goto finish;
     }
     /* 3b. prepare sign the SPUK */
-    ret = mbedtls_rsa_pkcs1_signature(buffer, n, signed_rom, &signed_len,
+    sig_len = mbedtls_get_pem_sig_len(PRIVATE_RSA_KEY_FILE, true, NULL);
+    if (sig_len < 0) {
+        mbedtls_printf("mbedtls_get_pem_sig_len failed!\n");
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    buffer[n    ] = (unsigned char) (sig_len >> 8);
+    buffer[n + 1] = (unsigned char) (sig_len);
+    ret = mbedtls_rsa_pkcs1_signature(buffer, n, buffer + n + 2, &signed_len,
                                      M_SHA256, PRIVATE_RSA_KEY_FILE, NULL);
     if (ret != 0) {
         mbedtls_printf("rsa_pkcs1_signature failed ret = %d\n", rc);
         goto finish;
     }
+    buflen = n + 2 + sig_len;
+    buf2[0] = (unsigned char)(buflen >> 8);
+    buf2[1] = (unsigned char)(buflen);
     /* 3c. SPUK + signed to buffer */
-    net_len = utils_net_server_send(buffer, n);
-    if (net_len < 0) {
+    mbedtls_printf("send to client len %d n = %d siglen = %d\n", buflen, n, sig_len);
+    net_len = utils_net_server_send(buf2, 2);
+    if (net_len != 2) {
         mbedtls_printf("net send SPUK failed ret = %d\n", rc);
         ret = -ERROR_COMMON_NET_SEND_FAILED;
         goto finish;
     }
-    net_len = utils_net_server_send(signed_rom, signed_len);
-    if (net_len < 0) {
-        mbedtls_printf("net send SPUK signed failed ret = %d\n", rc);
+    net_len = utils_net_server_send(buffer, buflen);
+    if (net_len != buflen) {
+        mbedtls_printf("net send SPUK signed failed ret = %d\n", net_len);
         ret = -ERROR_COMMON_NET_SEND_FAILED;
         goto finish;
     }
-
     /* 4. get client DH public key CPUK */
     mbedtls_printf( "\n  . Receiving the client's public value" );
     fflush( stdout );
     memset( buffer, '\0', sizeof( buffer ) );
     n = dhm.len;
-    ret = utils_net_server_recv(buffer, n);
-    if (ret != 0) {
-       goto finish;
+    net_len = utils_net_server_recv(buffer, n);
+    if (net_len != n) {
+        mbedtls_printf("\n  . util_net_server_recv failed\n");
+        ret = -ERROR_COMMON_NET_RECV_FAILED;
+        goto finish;
     }
     rc = mbedtls_dhm_read_public(&dhm, buffer, dhm.len);
     if (rc != 0) {
@@ -157,15 +170,15 @@ int mbedtls_dh_server_entry()
     }
 
     /* 6. Encrypt msg using CSK*/
-    mbedtls_printf( "...\n  . Encrypting and sending the ciphertext" );
+    mbedtls_printf( "...\n  . Encrypting and sending the ciphertext: %s \n", msg);
     fflush( stdout );
     mbedtls_aes_setkey_enc(&aes, buffer, 256);
     mbedtls_aes_crypt_ecb(&aes, MBEDTLS_AES_ENCRYPT, msg, buffer);
     net_len = utils_net_server_send(buffer, 16);
-    if (net_len < 0) {
+    if (net_len != 16 ) {
+        mbedtls_printf("send failed\n");
         goto finish;
     }
-
     finish:
     utils_net_server_free();
     mbedtls_aes_free( &aes );
