@@ -9,6 +9,7 @@
 #include <mbedtls/rsa.h>
 #include "mbedtls_md_sha.h"
 
+int mbedtls_get_pem_sig_len(const char* keyfile, bool ispriv, void* passwd);
 int mbedtls_gen_rsa_pem_key_files(const char *pub_keyfile, const char *pri_keyfile,
                                   const unsigned char *passwd, int passwd_len, unsigned int key_size);
 int mbedtls_gen_rsa_raw_key_files(const char *pub_keyfile, const char *pri_keyfile,

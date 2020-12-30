@@ -75,15 +75,14 @@ int utils_net_server_accept(void *client_ip, size_t buf_size, size_t *ip_len)
 int utils_net_server_send(const unsigned char *buf, size_t len)
 {
     int ret = ERROR_NONE;
-    size_t rc = 0;
     if (buf == NULL || len == 0) {
         mbedtls_printf("send error ,input buf or len is NULL or 0\n");
         ret = -ERROR_COMMON_INPUT_PARAMETERS;
         goto finish;
     }
-    rc = mbedtls_net_send(&client_ctx, buf, len);
-    if (rc < 0) {
-        mbedtls_printf("net send failed, ret = %ld\n", rc);
+    ret = mbedtls_net_send(&client_ctx, buf, len);
+    if (ret < 0) {
+        mbedtls_printf("net send failed, ret = %ld\n", ret);
         ret = -ERROR_COMMON_NET_SEND_FAILED;
         goto finish;
     }
@@ -102,7 +101,7 @@ int utils_net_server_recv(unsigned char* buf, size_t max_len)
     memset(buf, '\0', max_len);
     rc = mbedtls_net_recv(&client_ctx, buf, max_len);
     if (rc < 0) {
-        mbedtls_printf("net recv failed, ret = %d\n", rc);
+        mbedtls_printf("  . net recv failed, ret = %d\n", rc);
         rc = -ERROR_COMMON_NET_RECV_FAILED;
         goto finish;
     }

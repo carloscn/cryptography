@@ -8,6 +8,57 @@
 #define KEY_SIZE 512
 #define EXPONENT 0x10001L   //RSA_F4
 
+int mbedtls_get_pem_sig_len(const char* keyfile, bool ispriv, void* passwd)
+{
+    int ret = ERROR_NONE;
+    int rc = MBEDTLS_EXIT_SUCCESS;
+    FILE *f = NULL;
+    uint8_t *pers = "getlen";
+
+    mbedtls_rsa_context *rsa = NULL;
+    mbedtls_pk_context pk;
+
+    if (keyfile == NULL) {
+        printf("keyfile is NULL\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+
+    f = fopen((const char*)keyfile, "r");
+    if (NULL == f) {
+        printf("input pem_file is not exit.\n");
+        ret = -ERROR_COMMON_FILE_OPEN_FAILED;
+        goto finish;
+    }
+    fclose(f);
+    f = NULL;
+
+    mbedtls_pk_init(&pk);
+    if (ispriv == false)
+        rc = mbedtls_pk_parse_public_keyfile(&pk, keyfile);
+    else
+        rc = mbedtls_pk_parse_keyfile(&pk, keyfile, passwd);
+    if (rc != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -ret );
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    rsa = mbedtls_pk_rsa(pk);
+    if (rsa == NULL) {
+        mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ret = rsa->len;
+    finish:
+    if (rsa != NULL)
+        mbedtls_rsa_free(rsa);
+    mbedtls_pk_free(&pk);
+    if (f != NULL)
+        fclose(f);
+    return ret;
+}
+
 int mbedtls_gen_rsa_raw_key_files(const char *pub_keyfile, const char *pri_keyfile,
                                        const unsigned char *passwd, int passwd_len, unsigned int key_size)
 {
@@ -790,6 +841,7 @@ int mbedtls_rsa_pkcs1_signature(const unsigned char *sign_rom, size_t sign_rom_l
     unsigned char hash[64];
     unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
     const char *pers = "mbedtls_rsa_pkcs#1_signature";
+    size_t res_len = 0;
 
     /* 1. check input condition. */
     if (sign_rom == NULL || result == NULL || sign_rom_len == 0) {
@@ -835,7 +887,8 @@ int mbedtls_rsa_pkcs1_signature(const unsigned char *sign_rom, size_t sign_rom_l
     /* 2.3 sign data */
     /* For RSA, md_alg may be MBEDTLS_MD_NONE if hash_len != 0. For ECDSA, md_alg may never be MBEDTLS_MD_NONE. */
     /* 2.3.1 ecc need select hash padding, calculate hash. */
-    ret = mbedtls_user_md_type(sign_rom, sign_rom_len, hash, get_mbedtls_scheme(sch));
+    res_len = sign_rom_len;
+    ret = mbedtls_user_md_type(sign_rom, &res_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf(" failed!\n  hash: md_setup. returned :0x%4X\n", ret);
         goto finish;
@@ -847,8 +900,8 @@ int mbedtls_rsa_pkcs1_signature(const unsigned char *sign_rom, size_t sign_rom_l
         goto finish;
     }
     ret = mbedtls_rsa_pkcs1_sign(rsa, mbedtls_ctr_drbg_random, &ctr_drbg, \
-                                 MBEDTLS_RSA_PRIVATE, MBEDTLS_MD_MD5,\
-                                 sizeof(hash), hash, buf);
+                                 MBEDTLS_RSA_PRIVATE, get_mbedtls_scheme(sch),\
+                                 (unsigned int)res_len, hash, buf);
     if (ret != 0) {
         mbedtls_printf( " failed\n  ! mbedtls_rsa_pkcs1_sign returned -0x%04x\n", -ret );
         goto finish;
@@ -857,7 +910,6 @@ int mbedtls_rsa_pkcs1_signature(const unsigned char *sign_rom, size_t sign_rom_l
     /* 2.4 mv data to result text */
     memcpy(result, buf, *result_len);
     ret = MBEDTLS_EXIT_SUCCESS;
-
     finish:
     if (rsa != NULL)
         mbedtls_rsa_free(rsa);
