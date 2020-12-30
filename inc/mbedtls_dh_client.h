@@ -10,8 +10,8 @@
 #include "utils_net_client.h"
 #include "mbedtls_rsa.h"
 
-#define PUBLIC_RSA_KEY_FILE "rsapubkey.pem"
-#define DHM_PRIME_FILE "dhm.txt"
+#define PUBLIC_RSA_KEY_FILE "../rsapubkey.pem"
+#define DHM_PRIME_FILE "../dhm.txt"
 
 int mbedtls_dh_client_entry();
 

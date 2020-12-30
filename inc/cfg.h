@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "errors.h"
+#include "utils.h"
 
 typedef enum _rsa_key_type_t {
     RSA_LEN_1024 = 0,

@@ -18,6 +18,7 @@ IF(WIN32)
             ${mbedtls_dir}/library/libmbedtls.a
             ${mbedtls_dir}/library/libmbedcrypto.a
             ${mbedtls_dir}/library/libmbedx509.a
+            -lws2_32
     )
     add_executable(${PROJECT_NAME} ${SRC_PATH})
 

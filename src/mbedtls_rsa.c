@@ -8,6 +8,57 @@
 #define KEY_SIZE 512
 #define EXPONENT 0x10001L   //RSA_F4
 
+int mbedtls_get_pem_sig_len(const char* keyfile, bool ispriv, void* passwd)
+{
+    int ret = ERROR_NONE;
+    int rc = MBEDTLS_EXIT_SUCCESS;
+    FILE *f = NULL;
+    uint8_t *pers = "getlen";
+
+    mbedtls_rsa_context *rsa = NULL;
+    mbedtls_pk_context pk;
+
+    if (keyfile == NULL) {
+        printf("keyfile is NULL\n");
+        ret = -ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+
+    f = fopen((const char*)keyfile, "r");
+    if (NULL == f) {
+        printf("input pem_file is not exit.\n");
+        ret = -ERROR_COMMON_FILE_OPEN_FAILED;
+        goto finish;
+    }
+    fclose(f);
+    f = NULL;
+
+    mbedtls_pk_init(&pk);
+    if (ispriv == false)
+        rc = mbedtls_pk_parse_public_keyfile(&pk, keyfile);
+    else
+        rc = mbedtls_pk_parse_keyfile(&pk, keyfile, passwd);
+    if (rc != 0) {
+        printf( " failed\n  ! mbedtls_pk_parse_public_keyfile returned -0x%04x\n", -ret );
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    rsa = mbedtls_pk_rsa(pk);
+    if (rsa == NULL) {
+        mbedtls_printf(" failed\n  ! mbedtls_pk_rsa failed returned -0x%04x\n", -ret);
+        ret = -ERROR_CRYPTO_READ_KEY_FAILED;
+        goto finish;
+    }
+    ret = rsa->len;
+    finish:
+    if (rsa != NULL)
+        mbedtls_rsa_free(rsa);
+    mbedtls_pk_free(&pk);
+    if (f != NULL)
+        fclose(f);
+    return ret;
+}
+
 int mbedtls_gen_rsa_raw_key_files(const char *pub_keyfile, const char *pri_keyfile,
                                        const unsigned char *passwd, int passwd_len, unsigned int key_size)
 {
@@ -882,6 +933,7 @@ int mbedtls_rsa_pkcs1_verified(const unsigned char *sign_rom, size_t sign_rom_le
     mbedtls_rsa_context *rsa = NULL;
     unsigned char hash[64];
     unsigned char buf[MBEDTLS_MPI_MAX_SIZE];
+    size_t res_len = 0;
     const char *pers = "mbedtls_rsa_pkcs#1_verify";
 
     /* 1. check input condition. */
@@ -927,7 +979,8 @@ int mbedtls_rsa_pkcs1_verified(const unsigned char *sign_rom, size_t sign_rom_le
     memset(buf, 0, MBEDTLS_MPI_MAX_SIZE);
     /* 2.3 encrypt data */
     /* 2.3.1 caculate hash */
-    ret = mbedtls_user_md_type(result, result_len, hash, get_mbedtls_scheme(sch));
+    res_len = result_len;
+    ret = mbedtls_user_md_type(result, &res_len, hash, get_mbedtls_scheme(sch));
     if (ret != 0) {
         mbedtls_printf("caculate hash failed, ret = 0x%4x\n", ret);
         goto finish;
@@ -939,8 +992,8 @@ int mbedtls_rsa_pkcs1_verified(const unsigned char *sign_rom, size_t sign_rom_le
         goto finish;
     }
     ret = mbedtls_rsa_pkcs1_verify(rsa, mbedtls_ctr_drbg_random, &ctr_drbg, \
-                                   MBEDTLS_RSA_PUBLIC, MBEDTLS_MD_MD5,
-                                   sizeof(hash), hash, sign_rom);
+                                   MBEDTLS_RSA_PUBLIC, get_mbedtls_scheme(sch),
+                                   (unsigned int)res_len, hash, sign_rom);
     if (ret != 0) {
         printf( " failed\n  ! mbedtls_rsa_pkcs1_verify returned -0x%04x\n", -ret );
         goto finish;

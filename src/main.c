@@ -53,6 +53,6 @@ int main(void)
 //    test_tcp_server();
 //    test_tcp_client();
 //        test_gen_dhm();
-      test_rsa_dh_server();
+//      test_rsa_dh_server();
       test_rsa_dh_client();
 }
