@@ -5,7 +5,7 @@ MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
 
 set(CMAKE_C_STANDARD 99)
 AUX_SOURCE_DIRECTORY(src DIR_SRCS)
-SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h src/mbedtls_rsa.c inc/mbedtls_rsa.h inc/openssl_cfg.h inc/mbedtls_cfg.h src/mbedtls_ecc.c inc/mbedtls_ecc.h inc/errors.h inc/cfg.h src/openssl_common.c inc/openssl_common.h inc/mbedtls_common.h src/mbedtls_common.c src/mbedtls_random.c inc/mbedtls_random.h src/utils_net_server.c inc/utils_net_client.h inc/utils_net_sever.h src/utils_net_client.c src/mbedtls_dh_server.c inc/mbedtls_dh_server.h src/mbedtls_dh_client.c inc/mbedtls_dh_client.h src/mbedtls_gen_dh.c inc/mbedtls_gen_dh.h)
+SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h src/mbedtls_rsa.c inc/mbedtls_rsa.h inc/openssl_cfg.h inc/mbedtls_cfg.h src/mbedtls_ecc.c inc/mbedtls_ecc.h inc/errors.h inc/cfg.h src/openssl_common.c inc/openssl_common.h inc/mbedtls_common.h src/mbedtls_common.c src/mbedtls_random.c inc/mbedtls_random.h src/utils_net_server.c inc/utils_net_client.h inc/utils_net_sever.h src/utils_net_client.c src/mbedtls_dh_server.c inc/mbedtls_dh_server.h src/mbedtls_dh_client.c inc/mbedtls_dh_client.h src/mbedtls_gen_dh.c inc/mbedtls_gen_dh.h inc/mbedtls_ecdh_client.h inc/mbedtls_ecdh_server.h src/mbedtls_ecdh_client.c src/mbedtls_ecdh_server.c src/openssl_dh_client.c src/openssl_dh_server.c inc/openssl_dh_client.h inc/openssl_dh_server.h)
 IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
     SET(mbedtls_dir C:/opt/mbedtls-2.16.5)
