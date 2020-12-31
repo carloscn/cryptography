@@ -33,6 +33,7 @@
 #define PRIVATE_ECC_KEY_FILE "eccprikey.pem"
 #define PUBLIC_ECC_KEY_FILE "eccpubkey.pem"
 #define DHM_PRIME_FILE "dhm.txt"
+#define ECDHM_PRIME_FILE "ecdhm.txt"
 
 int openssl_md5_test_out(unsigned char *content, uint64_t len, unsigned char *out);
 int test_mbedtls_random();
@@ -59,5 +60,6 @@ int test_tcp_client();
 int test_gen_dhm();
 int test_rsa_dh_client();
 int test_rsa_dh_server();
+int test_gen_ecdhm();
 
 #endif //WARM_OPENSSL_TEST_CASE_H
