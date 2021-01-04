@@ -132,10 +132,15 @@ int mbedtls_gen_dh_prime(const char *outfile, int nbits)
 
 /*
  * mbedtls_ecp_group_id_x in ecp.h
- *
+ * shows how to use the ecdh_gen interface to generate
+ * EC Diffie-Hellman parameters.
+ * a
  * * Recommand cur is:
  * 1. MBEDTLS_ECP_DP_SECP521R1
  * 2. MBEDTLS_ECP_DP_CURVE25519
+ *
+ * as : y^2 = ax^3 + bx + c mod X
+ * this function is generate the X parameters.
  *
  * */
 int mbedtls_gen_ecdh_prime(const char *outfile, int mbedtls_ecp_group_id_x)
@@ -186,7 +191,7 @@ int mbedtls_gen_ecdh_prime(const char *outfile, int mbedtls_ecp_group_id_x)
         ret = -ERROR_CRYPTO_INIT_FAILED;
         goto finish;
     }
-    mbedtls_printf("  . init: load ecp group.\n");
+    mbedtls_printf("  . init: load ecp group. the len is %ld\n", ctx.grp.pbits);
 
     rc = mbedtls_ecdh_gen_public(&ctx.grp, &ctx.d, &ctx.Q,
                                  mbedtls_ctr_drbg_random, &ctr_drbg);
