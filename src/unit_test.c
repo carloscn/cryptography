@@ -799,7 +799,7 @@ int test_gen_dhm()
 int test_gen_ecdhm()
 {
     int ret = 0;
-    if ((ret = mbedtls_gen_ecdh_prime(ECDHM_PRIME_FILE, MBEDTLS_ECP_DP_CURVE25519) != 0)) {
+    if ((ret = mbedtls_gen_ecdh_prime(ECDHM_PRIME_FILE, MBEDTLS_ECP_DP_SECP256R1) != 0)) {
         printf("test : gen ecdh_prime failed returned %d\n", ret);
         return ret;
     }
