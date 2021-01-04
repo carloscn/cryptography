@@ -55,5 +55,7 @@ int main(void)
 //        test_gen_dhm();
 //      test_rsa_dh_server();
 //      test_rsa_dh_client();
-    test_gen_ecdhm();
+//    test_gen_ecdhm();
+//    test_ecdh_server();
+    test_ecdh_client();
 }

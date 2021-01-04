@@ -851,3 +851,37 @@ int test_rsa_dh_client()
         return ret;
     }
 }
+
+int test_ecdh_server()
+{
+    int ret = 0;
+    ret = mbedtls_ecdh_server_entry();
+    if (ret != 0) {
+        printf("test failed for rsa dh server\n");
+        return ret;
+    }
+}
+
+/*
+ * Test for rsa hd client.
+ * 1. init mbedtls, read (DHP) from dh_prime.txt
+ * 2. init network as client.
+ * 3. Connect to server network.
+ * 4. Recv server's SPUK and signed SPUK hash. (SHA256)
+ * 5. Do SPUK hash, and using the public key to verify the SPUK. (RSA1024)
+ * 6. Generate the client DH public key(CPUK) randomly.
+ *    and mod it to gen client DH private key (CPRK)
+ * 7. Send CPUK to server.
+ * 8. Caculate: DHP + SPUK + CPRK = CSK.
+ * 9. Recv the server encrypted msg.
+ * 10. Decrypt the msg as "hello world."
+ * */
+int test_ecdh_client()
+{
+    int ret = 0;
+    ret = mbedtls_ecdh_client_entry();
+    if (ret != 0) {
+        printf("test failed for rsa dh client\n");
+        return ret;
+    }
+}
