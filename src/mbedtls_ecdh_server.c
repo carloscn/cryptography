@@ -4,6 +4,10 @@
 
 #include "mbedtls_ecdh_server.h"
 
+// the RFC7748 https://tools.ietf.org/html/rfc7748#page-4
+// Recommand the curves are :
+// MBEDTLS_ECP_DP_CURVE25519
+// MBEDTLS_ECP_DP_CURVE448
 #define CUR_ID MBEDTLS_ECP_DP_SECP256K1
 
 /*
