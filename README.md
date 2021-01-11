@@ -1,11 +1,14 @@
-# cryptography
+# Cryptography Demo
 
-The demo of cryptography. The content as follows:
-* DRBG random:
+The demo of cryptography. Haochen mate's reinvent the wheel. 
+
+The content as follows:
+
+* DRBG random number:
   * 1.1 ctr drbg
   * 1.2 hash drbg
   * 1.3 hmac drbg
-   
+  
 * HASH and SHA
   * 2.1 MD5
   * 2.2 SHA224/SHA256/SHA384/SHA512
@@ -29,3 +32,4 @@ The demo of cryptography. The content as follows:
 * Weierstrass Curve(secp256r1 etc): 
 * Montgomery Curve(curve25519+curve448): https://learnblockchain.cn/article/1641
 * Edwards Curve(adwards22519 etc): https://blog.csdn.net/mutourend/article/details/98597316
+* 椭圆曲线的压缩和非压缩秘钥:https://ld246.com/article/1550844562914

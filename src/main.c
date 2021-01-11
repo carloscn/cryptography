@@ -52,10 +52,10 @@ int main(void)
 //    test_mbedtls_random();
 //    test_tcp_server();
 //    test_tcp_client();
-//        test_gen_dhm();
+        test_gen_dhm();
 //      test_rsa_dh_server();
 //      test_rsa_dh_client();
 //    test_gen_ecdhm();
 //    test_ecdh_server();
-    test_ecdh_client();
+//    test_ecdh_client();
 }

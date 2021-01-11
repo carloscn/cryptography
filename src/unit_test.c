@@ -790,8 +790,14 @@ int test_tcp_client()
 int test_gen_dhm()
 {
     int ret = 0;
+#if 0
     if ((ret = mbedtls_gen_dh_prime(DHM_PRIME_FILE, 2048)) != 0) {
-        printf("test : gen dh_prime failed returned %d\n", ret);
+        printf("mbedtls test : gen dh_prime failed returned %d\n", ret);
+        return ret;
+    }
+#endif
+    if ((ret = openssl_gen_dh_prime(DHM_PRIME_FILE, 512)) != 0) {
+        printf("openssl test : gen dh_prime failed returned %d\n", ret);
         return ret;
     }
 }
@@ -803,6 +809,12 @@ int test_gen_ecdhm()
         printf("test : gen ecdh_prime failed returned %d\n", ret);
         return ret;
     }
+#if 0
+    if ((ret = openssl_gen_ecdh_prime(ECDHM_PRIME_FILE, MBEDTLS_ECP_DP_SECP256R1) != 0)) {
+        printf("test : gen ecdh_prime failed returned %d\n", ret);
+        return ret;
+    }
+#endif
 }
 /*
  * Test for rsa hd server
@@ -885,3 +897,4 @@ int test_ecdh_client()
         return ret;
     }
 }
+

@@ -1,2 +1,8 @@
 
-Do some work for sca.
+
+WW02:
+2.1 openssl DH interface.
+2.2 openssl ECDH interface.
+2.3 mbedtls X.509 certification.
+-------------------------------------------------------
+

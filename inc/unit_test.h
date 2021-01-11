@@ -27,6 +27,9 @@
 #include "mbedtls_dh_client.h"
 #include "mbedtls_ecdh_client.h"
 #include "mbedtls_ecdh_server.h"
+#include "openssl_gen_dh.h"
+#include "openssl_dh_server.h"
+#include "openssl_dh_client.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
