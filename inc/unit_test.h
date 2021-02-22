@@ -30,6 +30,8 @@
 #include "openssl_gen_dh.h"
 #include "openssl_dh_server.h"
 #include "openssl_dh_client.h"
+#include "mbedtls_cert_csr.h"
+#include "mbedtls_cert_crt.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
@@ -68,4 +70,6 @@ int test_rsa_dh_server();
 int test_gen_ecdhm();
 int test_ecdh_client();
 int test_ecdh_server();
+int test_cert_req();
+int test_cert_crt();
 #endif //WARM_OPENSSL_TEST_CASE_H

@@ -898,3 +898,22 @@ int test_ecdh_client()
     }
 }
 
+int test_cert_req()
+{
+    int ret = 0;
+    ret = mbedtls_gen_csr_file();
+    if (ret != 0) {
+        printf("test fialed for cert req\n");
+        return ret;
+    }
+}
+
+int test_cert_crt()
+{
+    int ret = 0;
+    ret = mbedtls_gen_crt_file();
+    if (ret != 0) {
+        printf("test fialed for cert crt\n");
+        return ret;
+    }
+}
