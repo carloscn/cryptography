@@ -913,7 +913,43 @@ int test_cert_crt()
     int ret = 0;
     ret = mbedtls_gen_crt_file();
     if (ret != 0) {
-        printf("test fialed for cert crt\n");
+        printf("test failed for cert crt\n");
         return ret;
     }
+}
+
+int test_sca()
+{
+    int ret = 0;
+    uint8_t plain_buffer[128];
+    uint8_t cipher_text[128];
+    size_t plain_len = 0;
+    size_t cipher_len = 0;
+    size_t i = 0;
+    const uint8_t key[16] = { 0x06, 0xa9, 0x21, 0x40, 0x36, 0xb8, 0xa1, 0x5b,
+                        0x51, 0x2e, 0x03, 0xd5, 0x34, 0x12, 0x00, 0x06 };
+    const uint8_t iv[16] = { 0x3d, 0xaf, 0xba, 0x42, 0x9d, 0x9e, 0xb4, 0x30,
+                       0xb4, 0x22, 0xda, 0x80, 0x2c, 0x9f, 0xac, 0x41 };
+    const unsigned char *ptx = "this is the test the sca msg\n";
+    cipher_len = sizeof cipher_text;
+    ret = mbedtls_cipher_user_encrypt(ptx, strlen(ptx), iv, sizeof iv,
+                                      key, sizeof key ,
+                                      cipher_text, &cipher_len,
+                                      MBEDTLS_CIPHER_AES_128_CBC);
+    if (ret != 0) {
+        printf("test failed for user encrypt\n");
+        return ret;
+    }
+    ret = mbedtls_cipher_user_decrypt(cipher_text, cipher_len, iv, sizeof iv,
+                                      key, sizeof key,
+                                      plain_buffer, &plain_len,
+                                      MBEDTLS_CIPHER_AES_128_CBC);
+    if (ret != 0) {
+        printf("test failed for user decrypt\n");
+        return ret;
+    }
+    plain_buffer[plain_len] = '\0';
+    mbedtls_printf("plain text : %s\n", plain_buffer);
+
+
 }

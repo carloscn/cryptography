@@ -59,5 +59,6 @@ int main(void)
 //    test_ecdh_server();
 //    test_ecdh_client();
 //    test_cert_req();
-    test_cert_crt();
+//    test_cert_crt();
+    test_sca();
 }

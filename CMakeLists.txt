@@ -24,7 +24,7 @@ SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h
         src/openssl_gen_dh.c inc/openssl_gen_dh.h
         src/mbedtls_cert_csr.c inc/mbedtls_cert_csr.h
         src/mbedtls_cert_crt.c inc/mbedtls_cert_crt.h
-
+        src/mbedtls_sca.c inc/mbedtls_sca.h
         )
 IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)

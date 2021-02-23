@@ -32,6 +32,7 @@
 #include "openssl_dh_client.h"
 #include "mbedtls_cert_csr.h"
 #include "mbedtls_cert_crt.h"
+#include "mbedtls_sca.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
@@ -72,4 +73,5 @@ int test_ecdh_client();
 int test_ecdh_server();
 int test_cert_req();
 int test_cert_crt();
+int test_sca();
 #endif //WARM_OPENSSL_TEST_CASE_H
