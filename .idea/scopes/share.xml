@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="share" pattern="file[warm_openssl]:lib/mbedtls/library//*||file[warm_openssl]:lib/mbedtls/programs//*||file[warm_openssl]:src//*" />
-</component>

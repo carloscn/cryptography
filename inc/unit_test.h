@@ -6,12 +6,13 @@
 #define WARM_OPENSSL_TEST_CASE_H
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef _WIN32 or _WIN64
-#include <windows.h>
-#endif
-#ifdef __unix
+#if defined(__linux__) || defined(__APPLE__)
 #include <unistd.h>
+#elif defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
+#define sleep(x) Sleep((x)*1000)
 #endif
+
 #include "mbedtls_random.h"
 #include "openssl_rsa.h"
 #include "openssl_sm2.h"
