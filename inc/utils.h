@@ -11,6 +11,9 @@
 #include <stdio.h>
 
 #define DUMP_HEX(A) _print_hex("hex list :", A, strlen(A))
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
 
 #define UTILS_CHECK(__true_condition__, __ret_code__, __fmt__, ...) \
     do {                                                            \

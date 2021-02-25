@@ -932,10 +932,10 @@ int test_sca()
                        0xb4, 0x22, 0xda, 0x80, 0x2c, 0x9f, 0xac, 0x41 };
     const unsigned char *ptx = "this is the test the sca msg\n";
     cipher_len = sizeof cipher_text;
-    ret = mbedtls_cipher_user_encrypt(ptx, strlen(ptx), iv, sizeof iv,
+    ret = openssl_cipher_user_encrypt(ptx, strlen(ptx), iv, sizeof iv,
                                       key, sizeof key ,
                                       cipher_text, &cipher_len,
-                                      MBEDTLS_CIPHER_AES_128_CBC);
+                                      M_AES_128_CBC);
     if (ret != 0) {
         printf("test failed for user encrypt\n");
         return ret;
@@ -943,13 +943,30 @@ int test_sca()
     ret = mbedtls_cipher_user_decrypt(cipher_text, cipher_len, iv, sizeof iv,
                                       key, sizeof key,
                                       plain_buffer, &plain_len,
-                                      MBEDTLS_CIPHER_AES_128_CBC);
+                                      M_AES_128_CBC);
     if (ret != 0) {
         printf("test failed for user decrypt\n");
         return ret;
     }
     plain_buffer[plain_len] = '\0';
-    mbedtls_printf("plain text : %s\n", plain_buffer);
+    printf("mbedtls plain text : %s\n", plain_buffer);
 
-
+    ret = mbedtls_cipher_user_encrypt(ptx, strlen(ptx), iv, sizeof iv,
+                                      key, sizeof key ,
+                                      cipher_text, &cipher_len,
+                                      M_AES_128_CBC);
+    if (ret != 0) {
+        printf("test failed for user encrypt\n");
+        return ret;
+    }
+    ret = openssl_cipher_user_decrypt(cipher_text, cipher_len, iv, sizeof iv,
+                                      key, sizeof key,
+                                      plain_buffer, &plain_len,
+                                      M_AES_128_CBC);
+    if (ret != 0) {
+        printf("test failed for user decrypt\n");
+        return ret;
+    }
+    plain_buffer[plain_len] = '\0';
+    printf("openssl plain text : %s\n", plain_buffer);
 }

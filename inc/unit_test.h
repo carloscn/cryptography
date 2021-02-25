@@ -33,6 +33,7 @@
 #include "mbedtls_cert_csr.h"
 #include "mbedtls_cert_crt.h"
 #include "mbedtls_sca.h"
+#include "openssl_sca.h"
 
 #define PRIVATE_SM2_KEY_FILE "sm2prikey.pem"
 #define PUBLIC_SM2_KEY_FILE "sm2pubkey.pem"
