@@ -15,7 +15,7 @@
 #include <assert.h>
 #include "unit_test.h"
 
-int main(void)
+int s_main(void)
 {
     int ret = 0;
 //	printf("--------------------------\nmain: test_md5...\n--------------------------\n");
@@ -60,5 +60,5 @@ int main(void)
 //    test_ecdh_client();
 //    test_cert_req();
 //    test_cert_crt();
-    test_sca();
+//    test_sca();
 }

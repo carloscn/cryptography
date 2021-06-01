@@ -31,7 +31,26 @@ IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
     SET(mbedtls_dir C:/opt/mbedtls-2.16.5)
     MESSAGE(STATUS "Now is windows")
-    include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
+    include_directories(${openssl_dir}/include
+            ${mbedtls_dir}/include
+            ./inc
+            ./testsuite/thirdpart/Headers
+            ./testsuite
+            ./testsuite/thirdpart/Sources)
+    SET(SRC_PATH ${DIR_SRCS}
+            ./testsuite/thirdpart/Sources/Automated.c
+            ./testsuite/thirdpart/Sources/Basic.c
+            ./testsuite/thirdpart/Sources/Console.c
+            ./testsuite/thirdpart/Sources/CUError.c
+            ./testsuite/thirdpart/Sources/MyMem.c
+            ./testsuite/thirdpart/Sources/TestDB.c
+            ./testsuite/thirdpart/Sources/TestRun.c
+            ./testsuite/thirdpart/Sources/Util.c
+            ./testsuite/thirdpart/Sources/test_cunit.c
+            testsuite/test_main.c testsuite/test_main.h
+            testsuite/ExampleTests.c
+            testsuite/OpensslTests.c
+            )
     include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
     link_libraries(
             ${openssl_dir}/lib/libssl.lib
