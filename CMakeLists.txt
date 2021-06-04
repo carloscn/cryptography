@@ -38,15 +38,12 @@ IF(WIN32)
             ./testsuite
             ./testsuite/thirdpart/Sources)
     SET(SRC_PATH ${DIR_SRCS}
-            ./testsuite/thirdpart/Sources/Automated.c
             ./testsuite/thirdpart/Sources/Basic.c
-            ./testsuite/thirdpart/Sources/Console.c
             ./testsuite/thirdpart/Sources/CUError.c
             ./testsuite/thirdpart/Sources/MyMem.c
             ./testsuite/thirdpart/Sources/TestDB.c
             ./testsuite/thirdpart/Sources/TestRun.c
             ./testsuite/thirdpart/Sources/Util.c
-            ./testsuite/thirdpart/Sources/test_cunit.c
             testsuite/test_main.c testsuite/test_main.h
             testsuite/ExampleTests.c
             testsuite/OpensslTests.c
