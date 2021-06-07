@@ -14,8 +14,9 @@
 #include <stdint.h>
 #include <assert.h>
 #include "unit_test.h"
+#include "kasumi/test_kasumi.h"
 
-int s_main(void)
+int main(void)
 {
     int ret = 0;
 //	printf("--------------------------\nmain: test_md5...\n--------------------------\n");
@@ -61,4 +62,5 @@ int s_main(void)
 //    test_cert_req();
 //    test_cert_crt();
 //    test_sca();
+    test_kasumi_entry();
 }

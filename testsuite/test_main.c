@@ -9,7 +9,8 @@
 #include "Basic.h"
 #include "ExampleTests.h"
 #include "OpensslTests.h"
-int main(int argc, char* argv[]) {
+
+int test_suite_entry(int argc, char* argv[]) {
     CU_BasicRunMode mode = CU_BRM_VERBOSE;
     CU_ErrorAction error_action = CUEA_IGNORE;
     int i;
@@ -58,11 +59,11 @@ int main(int argc, char* argv[]) {
     }
     else {
         //AddTests();
-        add_openssl_testsuite();
+        //add_openssl_testsuite();
         CU_basic_set_mode(mode);
         CU_set_error_action(error_action);
         printf("\nTests completed with return value %d.\n", CU_basic_run_tests());
-        print_openssl_results();
+        //print_openssl_results();
         CU_cleanup_registry();
     }
 

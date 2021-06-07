@@ -47,7 +47,7 @@ IF(WIN32)
             testsuite/test_main.c testsuite/test_main.h
             testsuite/ExampleTests.c
             testsuite/OpensslTests.c
-            )
+            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h)
     include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
     link_libraries(
             ${openssl_dir}/lib/libssl.lib
