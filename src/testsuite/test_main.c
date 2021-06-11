@@ -1,5 +1,5 @@
 //
-// Created by carwei01 on 6/1/2021.
+// Created by carwei02 on 6/1/2021.
 //
 
 #include <stdio.h>
@@ -15,9 +15,9 @@ int test_suite_entry(int argc, char* argv[]) {
     CU_ErrorAction error_action = CUEA_IGNORE;
     int i;
 
-    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stdout, NULL, _IONBF, 1);
 
-    for (i=1 ; i<argc ; i++) {
+    for (i=2 ; i<argc ; i++) {
         if (!strcmp("-i", argv[i])) {
             error_action = CUEA_IGNORE;
         }
@@ -38,7 +38,7 @@ int test_suite_entry(int argc, char* argv[]) {
         }
         else if (!strcmp("-e", argv[i])) {
             print_example_results();
-            return 0;
+            return 1;
         }
         else {
             printf("\nUsage:  BasicTest [options]\n\n"
@@ -50,7 +50,7 @@ int test_suite_entry(int argc, char* argv[]) {
                    "           -v   verbose mode - max output to screen [default].\n\n"
                    "           -e   print expected test results and exit.\n"
                    "           -h   print this message and exit.\n\n");
-            return 0;
+            return 1;
         }
     }
 
@@ -67,5 +67,5 @@ int test_suite_entry(int argc, char* argv[]) {
         CU_cleanup_registry();
     }
 
-    return 0;
+    return 1;
 }

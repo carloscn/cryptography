@@ -5,6 +5,7 @@ MESSAGE(STATUS "operation system is ${CMAKE_SYSTEM}")
 
 set(CMAKE_C_STANDARD 99)
 AUX_SOURCE_DIRECTORY(src DIR_SRCS)
+SET(cunit_dir ./src/testsuite/thirdpart)
 SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h
         src/mbedtls_rsa.c inc/mbedtls_rsa.h
         inc/openssl_cfg.h inc/mbedtls_cfg.h
@@ -26,6 +27,7 @@ SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h
         src/mbedtls_cert_crt.c inc/mbedtls_cert_crt.h
         src/mbedtls_sca.c inc/mbedtls_sca.h
         src/openssl_sca.c inc/openssl_sca.h
+        src/unit_test_mbedtls.c
         )
 IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
@@ -34,21 +36,23 @@ IF(WIN32)
     include_directories(${openssl_dir}/include
             ${mbedtls_dir}/include
             ./inc
-            ./testsuite/thirdpart/Headers
-            ./testsuite
-            ./testsuite/thirdpart/Sources)
+            src/testsuite/thirdpart/Headers
+            src/testsuite
+            src/testsuite/thirdpart/Sources)
     SET(SRC_PATH ${DIR_SRCS}
-            ./testsuite/thirdpart/Sources/Basic.c
-            ./testsuite/thirdpart/Sources/CUError.c
-            ./testsuite/thirdpart/Sources/MyMem.c
-            ./testsuite/thirdpart/Sources/TestDB.c
-            ./testsuite/thirdpart/Sources/TestRun.c
-            ./testsuite/thirdpart/Sources/Util.c
-            testsuite/test_main.c testsuite/test_main.h
-            testsuite/ExampleTests.c
-            testsuite/OpensslTests.c
-            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h)
-    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
+            src/testsuite/thirdpart/Sources/Basic.c
+            src/testsuite/thirdpart/Sources/CUError.c
+            src/testsuite/thirdpart/Sources/MyMem.c
+            src/testsuite/thirdpart/Sources/TestDB.c
+            src/testsuite/thirdpart/Sources/TestRun.c
+            src/testsuite/thirdpart/Sources/Util.c
+            src/testsuite/test_main.c src/testsuite/test_main.h
+            src/testsuite/ExampleTests.c
+            src/testsuite/OpensslTests.c
+            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c
+            src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h
+            src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h)
+    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library ${cunit_dir}/Headers)
     link_libraries(
             ${openssl_dir}/lib/libssl.lib
             ${openssl_dir}/lib/libcrypto.lib

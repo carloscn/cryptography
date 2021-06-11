@@ -12,6 +12,7 @@
 #include <mbedtls/platform.h>
 #include <mbedtls/pk.h>
 
-
 mbedtls_md_type_t get_mbedtls_scheme(SCHEME_TYPE sch);
+
+#define BYTE_CONV_BITS_NUM(bytes_number) (bytes_number * 8)
 #endif //CARLOS_OPENMBED_MBEDTLS_COMMON_H

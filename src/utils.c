@@ -13,3 +13,33 @@ void _print_hex(const char *title, const unsigned char buf[], size_t len)
     }
     printf("\r\n");
 }
+
+int CK_ARRAY(unsigned char *a, unsigned char *b, size_t size)
+{
+    size_t i = 0;
+    for (i = 0; i < size; i ++) {
+        if (a[i] != b[i]) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+void PRINTF_ARRAY(unsigned char *a, size_t size, const unsigned char *msg)
+{
+    size_t i = 0;
+    printf(msg);
+    for (i = 0; i < size; i ++) {
+        printf("0x%2x,", a[i]);
+    }
+    printf("\n");
+}
+
+int CK_PASS(int e)
+{
+    if (!e) {
+        printf("Result Passed!\n");
+    }else{
+        printf("Result Failed!\n");
+    }
+}

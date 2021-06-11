@@ -23,4 +23,8 @@
     } while(0)
 void _print_hex(const char *title, const unsigned char buf[], size_t len);
 
+int check_pass(int e);
+int check_arrary(unsigned char *a, unsigned char *b, size_t size);
+void PRINTF_ARRAY(unsigned char *a, size_t size, const unsigned char *msg);
+#define ARRAY_SIZE(x)       ((size_t)(sizeof(x)/sizeof(x[0])))
 #endif //WARM_OPENSSL_UTILS_H
