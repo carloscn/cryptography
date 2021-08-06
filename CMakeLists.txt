@@ -28,6 +28,7 @@ SET(SRC_PATH ${DIR_SRCS} src/openssl_ecc.c inc/openssl_ecc.h
         src/mbedtls_sca.c inc/mbedtls_sca.h
         src/openssl_sca.c inc/openssl_sca.h
         src/unit_test_mbedtls.c
+        src/unit_test_gmssl.c
         )
 IF(WIN32)
     SET(openssl_dir C:/Program\ Files/OpenSSL-Win64)
@@ -51,7 +52,8 @@ IF(WIN32)
             src/testsuite/OpensslTests.c
             src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c
             src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h
-            src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h)
+            #src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h
+            )
     include_directories(${openssl_dir}/lib ${mbedtls_dir}/library ${cunit_dir}/Headers)
     link_libraries(
             ${openssl_dir}/lib/libssl.lib
@@ -66,24 +68,61 @@ IF(WIN32)
 ELSEIF(APPLE)
     SET(openssl_dir /usr/local/openssl)
     SET(mbedtls_dir /usr/local/include)
+    SET(gmssl_dir /Users/carlos/workspace/work/GmSSL)
     MESSAGE(STATUS "Now is apple")
     include_directories(${openssl_dir}/include ${mbedtls_dir}/../include ./inc)
     include_directories(${openssl_dir}/lib ${mbedtls_dir}/../library)
-    #link_libraries(ssl libcrypto mbedtls mbedcrypto)
+    include_directories(${openssl_dir}/include
+            ${mbedtls_dir}/include
+            ./inc
+            src/testsuite/thirdpart/Headers
+            src/testsuite
+            src/testsuite/thirdpart/Sources)
+    SET(SRC_PATH ${DIR_SRCS}
+            src/testsuite/thirdpart/Sources/Basic.c
+            src/testsuite/thirdpart/Sources/CUError.c
+            src/testsuite/thirdpart/Sources/MyMem.c
+            src/testsuite/thirdpart/Sources/TestDB.c
+            src/testsuite/thirdpart/Sources/TestRun.c
+            src/testsuite/thirdpart/Sources/Util.c
+            src/testsuite/test_main.c src/testsuite/test_main.h
+            src/testsuite/ExampleTests.c
+            src/testsuite/OpensslTests.c
+            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c
+            src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h
+            #src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h
+            )
     link_libraries(
-            ${openssl_dir}/lib/libssl.a
-            ${openssl_dir}/lib/libcrypto.a
+            #${openssl_dir}/lib/libssl.a
+            #${openssl_dir}/lib/libcrypto.a
+            ${gmssl_dir}/libssl.a
+            ${gmssl_dir}/libcrypto.a
             ${mbedtls_dir}/../lib/libmbedtls.a
             ${mbedtls_dir}/../lib/libmbedx509.a
             ${mbedtls_dir}/../lib/libmbedcrypto.a)
     add_executable(${PROJECT_NAME} ${SRC_PATH})
 
 ELSEIF(UNIX)
+    MESSAGE(STATUS "Now is Linux")
     SET(openssl_dir /usr/local/openssl)
     SET(mbedtls_dir /usr/local/mbedtls)
-    MESSAGE(STATUS "Now is Linux")
+    SET(SRC_PATH ${DIR_SRCS}
+            src/testsuite/thirdpart/Sources/Basic.c
+            src/testsuite/thirdpart/Sources/CUError.c
+            src/testsuite/thirdpart/Sources/MyMem.c
+            src/testsuite/thirdpart/Sources/TestDB.c
+            src/testsuite/thirdpart/Sources/TestRun.c
+            src/testsuite/thirdpart/Sources/Util.c
+            srcs/testsuite/test_main.c src/testsuite/test_main.h
+            src/testsuite/ExampleTests.c
+            src/testsuite/OpensslTests.c
+            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c
+            src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h
+            #src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h
+            src/aes.h src/test_data_aes_cbc.h)
     include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
     include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
+    include_directories(${cunit_dir}/Headers)
     link_libraries(
             ${openssl_dir}/lib/libssl.so
             ${openssl_dir}/lib/libcrypto.so

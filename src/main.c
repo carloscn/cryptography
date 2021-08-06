@@ -17,6 +17,7 @@
 #include "Basic.h"
 #include "kasumi/test_kasumi.h"
 #include "unit_test_mbedtls.h"
+#include "unit_test_gmssl.h"
 
 int main(int argc, char* argv[] ) {
     CU_BasicRunMode mode = CU_BRM_VERBOSE;
@@ -65,6 +66,7 @@ int main(int argc, char* argv[] ) {
     }
     else {
         add_mbedtls_testsuite();
+        add_gmssl_testsuite();
         //add_openssl_testsuite();
         CU_basic_set_mode(mode);
         CU_set_error_action(error_action);
@@ -121,5 +123,5 @@ int s_main(void)
 //    test_cert_req();
 //    test_cert_crt();
 //    test_sca();
-    test_kasumi_entry();
+//    test_kasumi_entry();
 }

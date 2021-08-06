@@ -321,3 +321,113 @@ int mbedtls_cipher_user_decrypt(const unsigned char* cipher_text, size_t cipher_
     mbedtls_printf("finish mbedtls_cipher_decrypt.\n\n");
     return ret;
 }
+#if 0
+int mbedtls_cipher_aes_ctr_encrypt(const unsigned char* plain_text, size_t plain_len,
+                                    size_t *nc_off, unsigned char nonce_counter[16],
+                                    unsigned char stream_block[16], unsigned char *out)
+{
+    int ret = ERROR_NONE;
+    int rc = MBEDTLS_EXIT_SUCCESS;
+    mbedtls_printf("\nmbedtls_cipher_encrypt data.\n");
+    if (plain_text == NULL || plain_len == 0 ||
+        out_buffer == NULL || out_len == NULL ||
+        iv == NULL || iv_len == 0 ||
+        key == NULL || key_len == 0) {
+        mbedtls_printf(" * input parameter(s) is invalid\n");
+        ret = ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    mbedtls_cipher_type_t type;
+    /* Current type just support up to POLY1305(max) */
+    if (aes_type > ARRAY_SIZE(sca_type_list)) {
+        mbedtls_printf(" * input type is not supported on mbedtls. \n");
+        ret = ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    type = (mbedtls_cipher_type_t)sca_type_list[aes_type];
+    if (type == MBEDTLS_CIPHER_NONE) {
+        mbedtls_printf(" * input type is not supported on mbedtls %d\n", type);
+        ret = ERROR_COMMON_INPUT_PARAMETERS;
+        goto finish;
+    }
+    size_t olen = 0, len = 0;
+    mbedtls_cipher_context_t ctx;
+    const mbedtls_cipher_info_t *info = NULL;
+    mbedtls_cipher_init(&ctx);
+    /*
+     * The type enum define in the mbedtls/cipher.h file.
+     * 1. MBEDTLS_CIPHER_AES_128_CBC
+     * 2. MBEDTLS_CIPHER_AES_192_CTR
+     * 3. etc...
+     * */
+    info = mbedtls_cipher_info_from_type(type);
+    if (info == NULL) {
+        mbedtls_printf(" * mbedtls_cipher_get_info error. line: %d\n", __LINE__);
+        ret = ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    rc = mbedtls_cipher_setup(&ctx, info);
+    if (rc != 0) {
+        mbedtls_printf(" * mbedtls_cipher_setup failed, returned %d, line: %d\n",
+                       rc, __LINE__);
+        ret = ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    mbedtls_printf(" * cipher info setup \n"
+                   " * name: %s\n"
+                   " * block size: %zd\n",
+                   mbedtls_cipher_get_name(&ctx),
+                   mbedtls_cipher_get_block_size(&ctx)
+    );
+    mbedtls_printf(" *\n"
+                   " * cipher start set key.\n"
+    );
+    rc = mbedtls_cipher_setkey(&ctx, key, key_len*8, MBEDTLS_ENCRYPT);
+    if (rc != 0) {
+        mbedtls_printf(" * mbedtls_cipher_setkey failed, returned %d, line: %d\n",
+                       rc, __LINE__);
+        ret = ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    mbedtls_printf(" *\n"
+                   " * cipher start set iv.\n"
+    );
+    rc = mbedtls_cipher_set_iv(&ctx, iv, iv_len);
+    if (rc != 0) {
+        mbedtls_printf(" * mbedtls_cipher_set_iv failed, returned %d, line: %d\n",
+                       rc, __LINE__);
+        ret = ERROR_CRYPTO_INIT_FAILED;
+        goto finish;
+    }
+    mbedtls_printf(" *\n"
+                   " * cipher load plain text.\n"
+    );
+    /*
+     * mbedtls_cipher_update return the length is not aligned part.
+     * and the others part will return on cipher_finish finishing.
+     * */
+    *out_len = 0;
+    rc = mbedtls_cipher_update(&ctx, plain_text, plain_len, out_buffer, &len);
+    if (rc != 0) {
+        mbedtls_printf(" * mbedtls_cipher_update failed, returned %d, line: %d\n",
+                       rc, __LINE__);
+        ret = ERROR_CRYPTO_ENCRYPT_FAILED;
+        goto finish;
+    }
+    *out_len += len;
+    rc = mbedtls_cipher_finish(&ctx, out_buffer + len, &len);
+    if (rc != 0) {
+        mbedtls_printf(" * mbedtls_cipher_finish failed, returned %d, line: %d\n",
+                       rc, __LINE__);
+        ret = ERROR_CRYPTO_ENCRYPT_FAILED;
+        goto finish;
+    }
+    *out_len += len;
+    mbedtls_printf(" * finish cipher. cipher len: %d\n", *out_len);
+
+    finish:
+    mbedtls_cipher_free(&ctx);
+    mbedtls_printf("finish mbedtls_cipher_encrypt.\n\n");
+    return ret;
+}
+#endif

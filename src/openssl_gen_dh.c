@@ -3,7 +3,7 @@
 //
 
 #include "openssl_gen_dh.h"
-
+#if version
 int openssl_gen_dh_prime(const char *out_file, int prim_len)
 {
     int ret = ERROR_NONE;
@@ -106,3 +106,4 @@ int openssl_gen_dh_prime(const char *out_file, int prim_len)
         free(buffer);
     return ret;
 }
+#endif

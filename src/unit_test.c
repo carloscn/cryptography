@@ -8,6 +8,7 @@
 
 #include "unit_test.h"
 
+#if 0
 int test_evp_pkcs1_rsa_encrypt_decrypt()
 {
 #define TEST_BUFFER_SIZE 255
@@ -970,3 +971,4 @@ int test_sca()
     plain_buffer[plain_len] = '\0';
     printf("openssl plain text : %s\n", plain_buffer);
 }
+#endif

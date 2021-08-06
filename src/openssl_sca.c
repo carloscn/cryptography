@@ -46,6 +46,7 @@ static const EVP_CIPHER* sca_type_list[] = {
     EVP_aes_256_cbc_hmac_sha1,
     EVP_aes_128_cbc_hmac_sha256,
     EVP_aes_256_cbc_hmac_sha256,
+#if 0
     EVP_aria_128_ecb,
     EVP_aria_128_cbc,
     EVP_aria_128_cfb1,
@@ -96,6 +97,7 @@ static const EVP_CIPHER* sca_type_list[] = {
     EVP_camellia_256_ctr,
     EVP_chacha20,
     EVP_chacha20_poly1305
+#endif
 };
 
 int openssl_cipher_user_encrypt(const unsigned char* plain_text, size_t plain_len,

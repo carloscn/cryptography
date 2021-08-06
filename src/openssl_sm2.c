@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "openssl_sm2.h"
+#if version
 int generate_sm2_key_files(const char *pub_keyfile, const char *pri_keyfile,
                            const unsigned char *passwd, int passwd_len)
 {
@@ -546,3 +547,4 @@ int openssl_evp_sm2_verify(unsigned char *sign_rom, size_t sign_rom_len,
 
     return ret;
 }
+#endif

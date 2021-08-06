@@ -4,6 +4,7 @@
 
 #include "openssl_ecc.h"
 #include "openssl_cfg.h"
+#if version
 int generate_ecc_key_files(const char *pub_keyfile, const char *pri_keyfile,
                            const unsigned char *passwd, int passwd_len)
 {
@@ -692,3 +693,4 @@ int openssl_evp_ecdsa_verify(const unsigned char *sign_rom, size_t sign_rom_len,
         BIO_free_all(bp);
     return ret;
 }
+#endif
