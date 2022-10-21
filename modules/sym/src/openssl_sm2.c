@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdint.h>
 #include "openssl_sm2.h"
-#if version
+#if 0
 int generate_sm2_key_files(const char *pub_keyfile, const char *pri_keyfile,
                            const unsigned char *passwd, int passwd_len)
 {

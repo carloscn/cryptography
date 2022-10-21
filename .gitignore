@@ -1,4 +1,9 @@
 cmake-build-debug/
-test/
+CMakeFiles
 .DS_Store
 .idea
+Debug
+*.o
+*.elf
+CMakeCache.txt
+.vscode

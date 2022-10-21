@@ -1,6 +1,6 @@
 [submodule "lib/openssl"]
 	path = lib/openssl
-	url = https://github.com/openssl/openssl.git
+	url = git@github.com:carloscn/openssl.git
 [submodule "lib/mbedtls"]
 	path = lib/mbedtls
-	url = https://github.com/carloscn/mbedtls.git
+	url = git@github.com:carloscn/mbedtls.git

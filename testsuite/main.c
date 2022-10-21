@@ -15,7 +15,7 @@
 #include <assert.h>
 #include "unit_test.h"
 #include "Basic.h"
-#include "kasumi/test_kasumi.h"
+#include "test_kasumi.h"
 #include "unit_test_mbedtls.h"
 #include "unit_test_gmssl.h"
 
