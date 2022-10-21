@@ -4,7 +4,7 @@
 
 #include "mbedtls_cert_crt.h"
 
-struct options
+static struct options
 {
     const char *issuer_crt;     /* filename of the issuer certificate   */
     const char *request_file;   /* filename of the certificate request  */

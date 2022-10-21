@@ -66,7 +66,7 @@ int main(int argc, char* argv[] ) {
     }
     else {
         add_mbedtls_testsuite();
-        add_gmssl_testsuite();
+        //add_gmssl_testsuite();
         //add_openssl_testsuite();
         CU_basic_set_mode(mode);
         CU_set_error_action(error_action);

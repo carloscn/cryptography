@@ -75,7 +75,6 @@ include_directories(
         ${INC_UTILS}
         ${INC_MAIN})
 
-
 # set library
 IF(WIN32)
         MESSAGE(STATUS "Now is windows")
@@ -111,25 +110,11 @@ ELSEIF(APPLE)
 
 ELSEIF(UNIX)
     MESSAGE(STATUS "Now is Linux")
-    SET(openssl_dir /usr/local/openssl)
+    SET(openssl_dir /usr/local)
     SET(mbedtls_dir /usr/local/mbedtls)
-    SET(SRC_PATH ${DIR_SRCS}
-            src/testsuite/thirdpart/Sources/Basic.c
-            src/testsuite/thirdpart/Sources/CUError.c
-            src/testsuite/thirdpart/Sources/MyMem.c
-            src/testsuite/thirdpart/Sources/TestDB.c
-            src/testsuite/thirdpart/Sources/TestRun.c
-            src/testsuite/thirdpart/Sources/Util.c
-            srcs/testsuite/test_main.c src/testsuite/test_main.h
-            src/testsuite/ExampleTests.c
-            src/testsuite/OpensslTests.c
-            src/kasumi/f8.c src/kasumi/kasumi.h src/kasumi/f9.c
-            src/kasumi/kasumi.c src/kasumi/test_kasumi.c src/kasumi/test_kasumi.h
-            #src/mbedtls_cmac_exa.c inc/mbedtls_cmac_exa.h
-            src/aes.h src/test_data_aes_cbc.h)
-    include_directories(${openssl_dir}/include ${mbedtls_dir}/include ./inc)
-    include_directories(${openssl_dir}/lib ${mbedtls_dir}/library)
-    include_directories(${cunit_dir}/Headers)
+    include_directories(${openssl_dir}/include/openssl
+                        ${mbedtls_dir}/include/mbedtls
+                        /usr/local/mbedtls/include)
     link_libraries(
             ${openssl_dir}/lib/libssl.so
             ${openssl_dir}/lib/libcrypto.so
