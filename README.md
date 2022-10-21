@@ -1,8 +1,53 @@
 # Cryptography Demo
 
-The demo of cryptography. Haochen mate's reinvent the wheel.
+## 内容说明
 
-The content as follows:
+本仓库用于存储对于加解密算法学的接口使用，主要使用mbedtls和openssl及一些其他的开源加解密库进行的demo展示，包含以下内容：
+
+* 随机数生成（DRBG）
+* Digest（HASH/MD5/SM3/CMAC/HMAC等）
+* 对称加密（AES/SM4/KASUMI/GCM/Chacha20）
+* 非对称加密（RSA/ECC/SM2）
+* 密钥交换
+* x509 CA
+
+工程目录如下：
+
+```
+├── lib
+│   ├── kasumi
+│   ├── mbedtls
+│   └── openssl
+├── modules
+│   ├── asym
+│   ├── cert
+│   ├── common
+│   ├── digest
+│   ├── random
+│   └── sym
+├── testsuite
+│   ├── inc
+│   ├── main.c
+│   ├── src
+│   └── thirdpart
+└── utils
+    ├── inc
+    └── src
+```
+
+本工程由 [CUnit - A Unit testing framework library for C. ](https://cunit.sourceforge.net/)单元测试框架对程序密码学模块进行组织。每一个模块（c文件）相应的嵌入到一个单元测试文件中。由`testsuite/main.c`函数组织注册这些测试文件。
+
+`modules`：为各个密码学模块的封装
+
+`testsuite`：单元测试框架
+
+`utils`：提供一些支持工具的服务
+
+`lib`：引用的第三方密码学库等
+
+**编译系统使用cmake**
+
+## 具体包含
 
 * DRBG random number:
   * 1.1 ctr drbg
@@ -26,16 +71,22 @@ The content as follows:
   * 4.1 csr file
   * 4.2 crt file
   * 4.3 ssl com (not finish)
-* SCA Symmetric crypto **<<<<<----- at present**
-  * 5.1 AES <-
+* SCA Symmetric crypto
+  * AES
   * Camellia
   * DES/3DES
   * GCM
   * CCM
   * Chacha20
 
+## 编译：
+
+* 需要自行编译mbedtls库和openssl库
+* `cmake CmakeLists.txt`
+* `make`
 
 ## ECDH reference:
+
 * https://tools.ietf.org/html/rfc7748#page-4
 * Weierstrass Curve(secp256r1 etc):
 * Montgomery Curve(curve25519+curve448): https://learnblockchain.cn/article/1641
