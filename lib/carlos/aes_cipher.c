@@ -173,6 +173,111 @@ finish:
     return ret;
 }
 
-
-
 #endif // #if defined(CBC) && (CBC == 1)
+
+int32_t aes_enc_cfb128(struct aes_ctx* ctx, uint8_t* buf, size_t buf_len)
+{
+    int32_t ret = 0;
+    size_t i;
+    uint8_t *iv = NULL;
+
+    if (0 == buf_len) {
+        goto finish;
+    }
+
+    if (NULL == ctx || NULL == buf) {
+        printf("[error] : ctx or buf pointer is NULL\n");
+        ret = -1;
+        goto finish;
+    }
+
+    iv = ctx->iv;
+    for (i = 0; i < buf_len; i += AES_BLOCKLEN) {
+        aes((state_t *)iv, ctx->round_key);
+        xor_with_iv(buf, iv);
+        iv = buf;
+        buf += AES_BLOCKLEN;
+    }
+
+    /* store Iv in ctx for next call */
+    memcpy(ctx->iv, iv, AES_BLOCKLEN);
+
+finish:
+    return ret;
+}
+
+int32_t aes_dec_cfb128(struct aes_ctx* ctx, uint8_t* buf, size_t buf_len)
+{
+    int32_t ret = 0;
+    size_t i;
+    uint8_t *iv = NULL;
+    uint8_t store_next_iv[AES_BLOCKLEN] = {0};
+
+    if (0 == buf_len) {
+        goto finish;
+    }
+
+    if (NULL == ctx || NULL == buf) {
+        printf("[error] : ctx or buf pointer is NULL\n");
+        ret = -1;
+        goto finish;
+    }
+
+    for (i = 0; i < buf_len; i += AES_BLOCKLEN) {
+        memcpy(store_next_iv, buf, AES_BLOCKLEN);
+        aes_inv((state_t *)iv, ctx->round_key);
+        xor_with_iv(buf, ctx->iv);
+        memcpy(ctx->iv, store_next_iv, AES_BLOCKLEN);
+        buf += AES_BLOCKLEN;
+    }
+
+finish:
+    return ret;
+}
+
+/* Symmetrical operation: same function for encrypting as for decrypting. Note any IV/nonce should never be reused with the same key */
+int32_t aes_enc_ctr(struct aes_ctx* ctx, uint8_t* buf, size_t buf_len)
+{
+    uint8_t buffer[AES_BLOCKLEN];
+    size_t i;
+    int32_t bi;
+    int32_t ret = 0;
+
+    if (0 == buf_len) {
+        goto finish;
+    }
+
+    if (NULL == ctx || NULL == buf) {
+        printf("[error] : ctx or buf pointer is NULL\n");
+        ret = -1;
+        goto finish;
+    }
+
+    for (i = 0, bi = AES_BLOCKLEN; i < buf_len; ++i, ++bi) {
+        if (bi == AES_BLOCKLEN) { /* we need to regen xor compliment in buffer */
+            memcpy(buffer, ctx->iv, AES_BLOCKLEN);
+            aes((state_t*)buffer, ctx->round_key);
+            /* Increment Iv and handle overflow */
+            for (bi = (AES_BLOCKLEN - 1); bi >= 0; --bi) {
+                /* inc will overflow */
+                if (ctx->iv[bi] == 255) {
+                    ctx->iv[bi] = 0;
+                    continue;
+                }
+                ctx->iv[bi] += 1;
+                break;
+            }
+            bi = 0;
+        }
+
+        buf[i] = (buf[i] ^ buffer[bi]);
+    }
+
+finish:
+    return ret;
+}
+
+int32_t aes_dec_ctr(struct aes_ctx* ctx, uint8_t* buf, size_t buf_len)
+{
+    return aes_enc_ctr(ctx, buf, buf_len);
+}
