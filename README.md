@@ -85,14 +85,7 @@
 * `cmake CmakeLists.txt`
 * `make`
 
-## ECDH reference:
-
-* https://tools.ietf.org/html/rfc7748#page-4
-* Weierstrass Curve(secp256r1 etc):
-* Montgomery Curve(curve25519+curve448): https://learnblockchain.cn/article/1641
-* Edwards Curve(adwards22519 etc): https://blog.csdn.net/mutourend/article/details/98597316
-* 椭圆曲线的压缩和非压缩秘钥:https://ld246.com/article/1550844562914
-* https://blog.wandoer.com/note/%E4%BD%BF%E7%94%A8-openssl-%E8%BF%9B%E8%A1%8C-dh-%E5%AF%86%E9%92%A5%E4%BA%A4%E6%8D%A2.htm
-## X509 reference:
-https://www.jianshu.com/p/a9497de4cbff
-https://www.cnblogs.com/milton/archive/2004/01/13/11076925.html
+## Reference:
+* [2.0_Security_随机数（伪随机数）](https://github.com/carloscn/blog/issues/136) [2022-10-23]
+* [3.0_Security_对称密钥算法加解密](https://github.com/carloscn/blog/issues/137) [2022-10-23]
+* [3.1_Security_对称密钥算法之AES](https://github.com/carloscn/blog/issues/138) [2022-10-25]
