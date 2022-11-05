@@ -26,6 +26,7 @@
 #include "CUnit.h"
 #include "mbedtls_cmac_exa.h"
 #include "unit_test_mbedtls.h"
+#include "mbedtls_hmac.h"
 
 /* WARNING - MAINTENANCE NIGHTMARE AHEAD
  *
@@ -594,6 +595,26 @@ static void test_mbedtls_aes_ctr_dec_str(void)
     CU_ASSERT_NSTRING_EQUAL(aes_test_ctr_enc_str, enc_plain, sizeof enc_plain)
 }
 
+
+static void test_mbedtls_hmac_384(void)
+{
+    int ret = 0, i = 0;
+    unsigned char key[] = {1,5,8,8,9,5,6,204,5,4,8,0,0,0,0};
+    unsigned char input[] = {1,5,8,8,9,5,6,204,5,4,8,0,0,0,0};
+    unsigned char output[48] = {0};
+
+    ret = mbedtls_hmac_sha384(key,
+                              sizeof(key)/sizeof(key[0]),
+                              input,
+                              sizeof(input)/sizeof(input[0]),
+                              output);
+    for (i = 0; i < 48; i ++) {
+        mbedtls_printf("%x", output[i]);
+    }
+    mbedtls_printf("\n");
+    CU_ASSERT_EQUAL(ret, 0);
+}
+
 static CU_TestInfo test_sca_suite[] = {
         {"test mbedtls aes ecb enc", TEST_FUN(test_mbedtls_aes_ecb_enc)},
         {"test mbedtls aes ecb dec", TEST_FUN(test_mbedtls_aes_ecb_dec)},
@@ -606,12 +627,17 @@ static CU_TestInfo test_sca_suite[] = {
         CU_TEST_INFO_NULL,
 };
 
+static CU_TestInfo test_hash_suite[] = {
+        {"test mbedtls hmac", TEST_FUN(test_mbedtls_hmac_384)},
+        CU_TEST_INFO_NULL,
+};
+
 
 static CU_SuiteInfo suites_list[] = {
   //{ "mbedtls test cmac",  suite_success_init, suite_success_clean, NULL, NULL, test_cmac_suite},
 
   { "mbedtls test sca",  suite_success_init, suite_success_clean, NULL, NULL, test_sca_suite},
-
+  { "mbedtls test hash",  suite_success_init, suite_success_clean, NULL, NULL, test_hash_suite},
   CU_SUITE_INFO_NULL,
 };
 
@@ -702,4 +728,3 @@ void add_mbedtls_testsuite(void)
   CU_add_test(pSuite, "testFatal", testFatal);
 */
 }
-

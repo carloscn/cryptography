@@ -4,13 +4,13 @@ bool mutils_is_prime(size_t num)
 {
     size_t i = 0;
 
-	for (i = 2; i <= (size_t)sqrt(num); i ++) {
-		if (0 == (num % i)) {
+    for (i = 2; i <= (size_t)sqrt(num); i ++) {
+        if (0 == (num % i)) {
             return false;
         }
-	}
+    }
 
-	return true;
+    return true;
 }
 
 size_t mutils_gcd(size_t m, size_t n)
