@@ -111,7 +111,7 @@ ELSEIF(APPLE)
 ELSEIF(UNIX)
     MESSAGE(STATUS "Now is Linux")
     SET(openssl_dir /usr/local)
-    SET(mbedtls_dir /usr/local/mbedtls)
+    SET(mbedtls_dir /usr/local)
     include_directories(${openssl_dir}/include/openssl
                         ${mbedtls_dir}/include/mbedtls
                         /usr/local/mbedtls/include)
